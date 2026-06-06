@@ -1,0 +1,5 @@
+description = "查询端网关模块"
+
+dependencies {
+    implementation(project(":eduone-query-kernel"))
+}

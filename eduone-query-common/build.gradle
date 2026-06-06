@@ -1,0 +1,5 @@
+description = "查询端通用模块"
+
+dependencies {
+    api(project(":eduone-common"))
+}

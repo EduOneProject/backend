@@ -1,0 +1,13 @@
+plugins {
+    alias libs.plugins.spring.boot
+}
+
+description = "Web应用启动模块"
+
+dependencies {
+    implementation(project(":eduone-repository"))
+    implementation(project(":eduone-business-gateway"))
+    implementation(project(":eduone-query-gateway"))
+    implementation(project(":eduone-query-contract-adapter"))
+    implementation libs.spring.boot.starter.web
+}

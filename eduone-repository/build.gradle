@@ -1,0 +1,5 @@
+description = "事件投影模块"
+
+dependencies {
+    implementation(project(":eduone-domain-api"))
+}
