@@ -1,12 +1,16 @@
 [versions]
 springBoot = "4.0.6"
 springDependencyManagement = "1.1.7"
+mysqlConnectorJ = "9.7.0"
+mybatis = "4.0.1"
 
 [libraries]
 lombok = { module = "org.projectlombok:lombok" }
 spring-boot-starter-web = { module = "org.springframework.boot:spring-boot-starter-web" }
 org-springframework-boot-spring-boot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test" }
 junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
+com-mysql-mysql-connector-j = { module = "com.mysql:mysql-connector-j", version.ref = "mysqlConnectorJ" }
+mybatis-spring-boot-starter = { module = "org.mybatis.spring.boot:mybatis-spring-boot-starter", version.ref = "mybatis" }
 
 [plugins]
 spring-boot = { id = "org.springframework.boot", version.ref = "springBoot" }

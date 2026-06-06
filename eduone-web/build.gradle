@@ -9,5 +9,6 @@ dependencies {
     implementation(project(":eduone-business-gateway"))
     implementation(project(":eduone-query-gateway"))
     implementation(project(":eduone-query-contract-adapter"))
-    implementation libs.spring.boot.starter.web
+    implementation(libs.spring.boot.starter.web)
+    implementation(libs.com.mysql.mysql.connector.j)
 }

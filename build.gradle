@@ -9,6 +9,12 @@ subprojects {
     apply plugin: 'java-library'
     apply plugin: libs.plugins.spring.dependency.management.get().pluginId
 
+    dependencyManagement {
+        imports {
+            mavenBom "org.springframework.boot:spring-boot-dependencies:${libs.versions.springBoot.get()}"
+        }
+    }
+
     java {
         toolchain {
             languageVersion = JavaLanguageVersion.of(17)
