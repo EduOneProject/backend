@@ -69,3 +69,20 @@ CREATE TABLE `TokenEntry`
     PRIMARY KEY (`processorName`, `segment`) USING BTREE
 ) ENGINE = InnoDB
   ROW_FORMAT = DYNAMIC;
+
+CREATE TABLE `dd_region_tree`
+(
+    `id`          varchar(32)  NOT NULL COMMENT '主键ID',
+    `code`        varchar(10)           DEFAULT NULL COMMENT '地区编码',
+    `parent_id`   varchar(32)           DEFAULT NULL COMMENT '上级ID，-1表示顶级地区',
+    `parent_code` varchar(10)           DEFAULT NULL COMMENT '上级地区code',
+    `level`       int                   DEFAULT NULL COMMENT '地区级别，1-省 2-市 3-区县',
+    `path`        varchar(50)           DEFAULT NULL COMMENT '地区编码路径',
+    `name`        varchar(20)           DEFAULT NULL COMMENT '地区名称',
+    `sort`        int                   DEFAULT NULL COMMENT '地区排序',
+    `status`      varchar(100) NOT NULL DEFAULT '1' COMMENT '地区状态',
+    PRIMARY KEY (`id`) USING BTREE,
+    KEY `code` (`code`) USING BTREE,
+    KEY `parent_code` (`parent_code`) USING BTREE
+) ENGINE = InnoDB
+  ROW_FORMAT = DYNAMIC COMMENT ='地区树';
