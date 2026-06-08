@@ -2,15 +2,22 @@
 springBoot = "4.0.6"
 springDependencyManagement = "1.1.7"
 mysqlConnectorJ = "9.7.0"
-mybatis = "4.0.1"
+mybatisPlusBom = "3.5.16"
+apacheCommonsCollections4 = "4.5.0"
+apacheCommonsLang3 = "3.20.0"
 
 [libraries]
 lombok = { module = "org.projectlombok:lombok" }
 spring-boot-starter-web = { module = "org.springframework.boot:spring-boot-starter-web" }
+org-springframework-boot-spring-boot-starter-graphql = { module = "org.springframework.boot:spring-boot-starter-graphql" }
 org-springframework-boot-spring-boot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test" }
 junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
 com-mysql-mysql-connector-j = { module = "com.mysql:mysql-connector-j", version.ref = "mysqlConnectorJ" }
-mybatis-spring-boot-starter = { module = "org.mybatis.spring.boot:mybatis-spring-boot-starter", version.ref = "mybatis" }
+mybatis-plus-bom = { module = "com.baomidou:mybatis-plus-bom", version.ref = "mybatisPlusBom" }
+com-baomidou-mybatis-plus-jsqlparser = { module = "com.baomidou:mybatis-plus-jsqlparser" }
+com-baomidou-mybatis-plus-spring-boot4-starter = { module = "com.baomidou:mybatis-plus-spring-boot4-starter" }
+org-apache-commons-commons-collections4 = { module = "org.apache.commons:commons-collections4", version.ref = "apacheCommonsCollections4" }
+org-apache-commons-commons-lang3 = { module = "org.apache.commons:commons-lang3", version.ref = "apacheCommonsLang3" }
 
 [plugins]
 spring-boot = { id = "org.springframework.boot", version.ref = "springBoot" }

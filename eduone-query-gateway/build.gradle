@@ -1,5 +1,6 @@
 description = "查询端网关模块"
 
 dependencies {
-    implementation(project(":eduone-query-kernel"))
+    api(project(":eduone-query-kernel"))
+    api(libs.org.springframework.boot.spring.boot.starter.graphql)
 }

@@ -1,6 +1,6 @@
 description = "查询端接口契约实现模块"
 
 dependencies {
-    implementation(project(":eduone-query-contract"))
-    implementation(project(":eduone-query-kernel"))
+    api(project(":eduone-query-contract"))
+    api(project(":eduone-query-kernel"))
 }
