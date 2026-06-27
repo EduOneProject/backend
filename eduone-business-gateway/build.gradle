@@ -1,3 +1,7 @@
+plugins {
+    id("io.github.summerain0.generate-graphql-schema-document-gradle-plugin")
+}
+
 description = "业务端网关模块"
 
 dependencies {

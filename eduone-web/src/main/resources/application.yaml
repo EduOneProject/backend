@@ -4,8 +4,7 @@ spring:
     url: jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT:3306}/${MYSQL_DATABASE}?characterEncoding=utf8&serverTimezone=Asia/Shanghai
     username: ${MYSQL_USERNAME}
     password: ${MYSQL_PASSWORD}
-
-mybatis:
-  mapper-locations: classpath:mapper/*.xml
-  configuration:
-    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+  graphql:
+    schema:
+      locations: classpath*:graphql/**/
+      file-extensions: .graphql

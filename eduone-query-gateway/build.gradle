@@ -1,6 +1,11 @@
+plugins {
+    id("io.github.summerain0.generate-graphql-schema-document-gradle-plugin")
+}
+
 description = "查询端网关模块"
 
 dependencies {
     api(project(":eduone-query-kernel"))
+    api(libs.spring.boot.starter.web)
     api(libs.org.springframework.boot.spring.boot.starter.graphql)
 }

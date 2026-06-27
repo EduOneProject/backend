@@ -8,6 +8,7 @@ apacheCommonsLang3 = "3.20.0"
 
 [libraries]
 lombok = { module = "org.projectlombok:lombok" }
+org-springframework-spring-context = { module = "org.springframework:spring-context" }
 spring-boot-starter-web = { module = "org.springframework.boot:spring-boot-starter-web" }
 org-springframework-boot-spring-boot-starter-graphql = { module = "org.springframework.boot:spring-boot-starter-graphql" }
 org-springframework-boot-spring-boot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test" }

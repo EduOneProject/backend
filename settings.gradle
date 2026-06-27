@@ -1,3 +1,7 @@
+pluginManagement {
+    includeBuild("submodule/generate-graphql-schema-document-gradle-plugin")
+}
+
 rootProject.name = 'EduOne'
 
 include 'eduone-web'

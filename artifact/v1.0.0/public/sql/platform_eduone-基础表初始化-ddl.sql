@@ -82,7 +82,8 @@ CREATE TABLE `dd_region_tree`
     `sort`        int                   DEFAULT NULL COMMENT '地区排序',
     `status`      varchar(100) NOT NULL DEFAULT '1' COMMENT '地区状态',
     PRIMARY KEY (`id`) USING BTREE,
-    KEY `code` (`code`) USING BTREE,
-    KEY `parent_code` (`parent_code`) USING BTREE
+    KEY `idx_code` (`code`) USING BTREE,
+    KEY `idx_parent_code` (`parent_code`) USING BTREE,
+    KEY `idx_parent_id` (`parent_id`)
 ) ENGINE = InnoDB
   ROW_FORMAT = DYNAMIC COMMENT ='地区树';

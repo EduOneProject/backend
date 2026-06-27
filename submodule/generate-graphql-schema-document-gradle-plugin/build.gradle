@@ -1,0 +1,20 @@
+plugins {
+    id 'java-gradle-plugin'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation("com.github.javaparser:javaparser-symbol-solver-core:3.28.0")
+    compileOnly("org.projectlombok:lombok:1.18.46")
+    annotationProcessor("org.projectlombok:lombok:1.18.46")
+}
+
+gradlePlugin {
+    plugins.create("generateGraphqlSchemaDocument") {
+        id = "io.github.summerain0.generate-graphql-schema-document-gradle-plugin"
+        implementationClass = "io.github.summerain0.plugin.gradle.generator.gqldoc.PluginMain"
+    }
+}

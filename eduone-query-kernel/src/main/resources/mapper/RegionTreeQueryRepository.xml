@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.github.eduoneproject.eduone.query.kernel.repository.region.RegionTreeQueryRepository">
+    <!-- 查询列表 -->
+    <select id="selectList"
+            parameterType="io.github.eduoneproject.eduone.query.kernel.repository.region.param.RegionTreeRParam"
+            resultType="io.github.eduoneproject.eduone.query.kernel.repository.region.dto.RegionTreeDto">
+        <include refid="selectSQL"/>
+        <where>
+            <!-- 地区ID列表 -->
+            <if test="@org.apache.commons.collections4.CollectionUtils@isNotEmpty(idList)">
+                AND regionTree.id IN
+                <foreach collection="idList" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <!-- 地区编码列表 -->
+            <if test="@org.apache.commons.collections4.CollectionUtils@isNotEmpty(codeList)">
+                AND regionTree.code IN
+                <foreach collection="codeList" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <!-- 上级地区id列表 -->
+            <if test="@org.apache.commons.collections4.CollectionUtils@isNotEmpty(parentIdList)">
+                AND regionTree.parent_id IN
+                <foreach collection="parentIdList" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <!-- 上级地区编码列表 -->
+            <if test="@org.apache.commons.collections4.CollectionUtils@isNotEmpty(parentCodeList)">
+                AND regionTree.parent_code IN
+                <foreach collection="parentCodeList" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <!-- 地区状态 -->
+            <if test="@org.apache.commons.lang3.StringUtils@isNotBlank(status)">
+                AND regionTree.status = #{status}
+            </if>
+        </where>
+        ORDER BY regionTree.sort ASC
+    </select>
+
+    <!-- 基础查询SQL -->
+    <sql id="selectSQL">
+        SELECT regionTree.id          AS 'id',
+               regionTree.code        AS 'code',
+               regionTree.parent_id   AS 'parentId',
+               regionTree.parent_code AS 'parentCode',
+               regionTree.level       AS 'level',
+               regionTree.path        AS 'path',
+               regionTree.name        AS 'name',
+               regionTree.sort        AS 'sort',
+               regionTree.status      AS 'status'
+        FROM dd_region_tree regionTree
+    </sql>
+</mapper>
