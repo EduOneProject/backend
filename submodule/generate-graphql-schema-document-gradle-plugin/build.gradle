@@ -1,20 +1,25 @@
-plugins {
-    id 'java-gradle-plugin'
-}
+subprojects {
+    if (it.name != "gqldoc-gradle") {
+        apply plugin: 'java-library'
+    } else {
+        apply plugin: 'java'
+    }
 
-repositories {
-    mavenCentral()
-}
+    repositories {
+        mavenCentral()
+    }
 
-dependencies {
-    implementation("com.github.javaparser:javaparser-symbol-solver-core:3.28.0")
-    compileOnly("org.projectlombok:lombok:1.18.46")
-    annotationProcessor("org.projectlombok:lombok:1.18.46")
-}
+    dependencies {
+        implementation("org.apache.commons:commons-lang3:3.20.0")
+        implementation("org.apache.commons:commons-collections4:4.6.0")
+        compileOnly("org.projectlombok:lombok:1.18.46")
+        annotationProcessor("org.projectlombok:lombok:1.18.46")
+        testImplementation platform("org.junit:junit-bom:6.0.0")
+        testImplementation("org.junit.jupiter:junit-jupiter")
+        testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    }
 
-gradlePlugin {
-    plugins.create("generateGraphqlSchemaDocument") {
-        id = "io.github.summerain0.generate-graphql-schema-document-gradle-plugin"
-        implementationClass = "io.github.summerain0.plugin.gradle.generator.gqldoc.PluginMain"
+    test {
+        useJUnitPlatform()
     }
 }

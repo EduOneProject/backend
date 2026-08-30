@@ -1,1 +1,6 @@
 rootProject.name = 'generate-graphql-schema-document-gradle-plugin'
+include 'gqldoc-core'
+include 'gqldoc-parser-java'
+include 'gqldoc-extension-eduone'
+include 'gqldoc-gradle'
+include 'gqldoc-output-sdl'

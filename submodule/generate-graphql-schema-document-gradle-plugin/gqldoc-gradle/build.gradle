@@ -1,0 +1,17 @@
+plugins {
+    id 'java-gradle-plugin'
+}
+
+dependencies {
+    implementation(project(':gqldoc-core'))
+    implementation(project(':gqldoc-extension-eduone'))
+    implementation(project(':gqldoc-parser-java'))
+    implementation(project(':gqldoc-output-sdl'))
+}
+
+gradlePlugin {
+    plugins.create("generateGraphqlSchemaDocument") {
+        id = "io.github.summerain0.generate-graphql-schema-document-gradle-plugin"
+        implementationClass = "io.github.summerain0.gqldoc.gradle.PluginMain"
+    }
+}

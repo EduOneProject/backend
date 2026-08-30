@@ -1,0 +1,4 @@
+dependencies {
+    implementation(project(':gqldoc-core'))
+    implementation('com.github.javaparser:javaparser-core:3.27.1')
+}
