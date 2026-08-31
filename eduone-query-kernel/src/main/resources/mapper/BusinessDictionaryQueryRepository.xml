@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.github.eduoneproject.eduone.query.kernel.repository.dictionary.BusinessDictionaryQueryRepository">
+    <!-- 查询业务字典列表 -->
+    <select id="selectList"
+            resultType="io.github.eduoneproject.eduone.query.kernel.repository.dictionary.dto.BusinessDictionaryDto">
+        <include refid="selectSQL"/>
+        <where>
+            <!-- 字典ID列表 -->
+            <if test="@org.apache.commons.collections4.CollectionUtils@isNotEmpty(param.idList)">
+                AND businessDictionary.id IN
+                <foreach item="item" collection="param.idList" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <!-- 字典类型 -->
+            <if test="@org.apache.commons.lang3.StringUtils@isNotBlank(param.type)">
+                AND businessDictionary.type = #{param.type}
+            </if>
+            <!-- 字典编码集合 -->
+            <if test="@org.apache.commons.collections4.CollectionUtils@isNotEmpty(param.codeList)">
+                AND businessDictionary.code IN
+                <foreach item="item" collection="param.codeList" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        <if test="@org.apache.commons.collections4.CollectionUtils@isNotEmpty(sortList)">
+            <trim prefix="ORDER BY ">
+                <foreach item="item" collection="sortList" separator=",">
+                    <!-- 排序字段 -->
+                    <if test="item.field == @io.github.eduoneproject.eduone.query.kernel.repository.dictionary.enums.BusinessDictionarySortField@SORT">
+                        businessDictionary.sort ${item.direction}
+                    </if>
+                    <!-- 创建时间 -->
+                    <if test="item.field == @io.github.eduoneproject.eduone.query.kernel.repository.dictionary.enums.BusinessDictionarySortField@CREATE_TIME">
+                        businessDictionary.create_time ${item.direction}
+                    </if>
+                </foreach>
+            </trim>
+        </if>
+    </select>
+
+    <!-- 查询业务字典类型列表 -->
+    <select id="selectTypeList"
+            resultType="io.github.eduoneproject.eduone.query.kernel.repository.dictionary.dto.BusinessDictionaryTypeDto">
+        <include refid="selectTypeSQL"/>
+        <where>
+            <!-- 字典类型名称 -->
+            <if test="@org.apache.commons.lang3.StringUtils@isNotBlank(param.name)">
+                AND businessDictionaryType.name LIKE CONCAT('%', #{param.name}, '%')
+            </if>
+        </where>
+        <if test="@org.apache.commons.collections4.CollectionUtils@isNotEmpty(sortList)">
+            <trim prefix="ORDER BY ">
+                <foreach item="item" collection="sortList" separator=",">
+                    <!-- 创建时间 -->
+                    <if test="item.field == @io.github.eduoneproject.eduone.query.kernel.repository.dictionary.enums.BusinessDictionaryTypeSortField@CREATE_TIME">
+                        businessDictionaryType.create_time ${item.direction}
+                    </if>
+                </foreach>
+            </trim>
+        </if>
+    </select>
+
+    <!-- 基础查询SQL -->
+    <sql id="selectSQL">
+        SELECT businessDictionary.id             AS 'id',
+               businessDictionary.type           AS 'type',
+               businessDictionary.code           AS 'code',
+               businessDictionary.name           AS 'name',
+               businessDictionary.status         AS 'status',
+               businessDictionary.sort           AS 'sort',
+               businessDictionary.update_user_id AS 'updateUserId',
+               businessDictionary.update_time    AS 'updateTime',
+               businessDictionary.create_user_id AS 'createUserId',
+               businessDictionary.create_time    AS 'createTime'
+        FROM dd_business_data_dictionary businessDictionary
+    </sql>
+
+    <!-- 基础查询SQL -->
+    <sql id="selectTypeSQL">
+        SELECT businessDictionaryType.type           AS 'type',
+               businessDictionaryType.name           AS 'name',
+               businessDictionaryType.desc           AS 'desc',
+               businessDictionaryType.update_user_id AS 'updateUserId',
+               businessDictionaryType.update_time    AS 'updateTime',
+               businessDictionaryType.create_user_id AS 'createUserId',
+               businessDictionaryType.create_time    AS 'createTime'
+        FROM dd_business_data_dictionary_type businessDictionaryType
+    </sql>
+</mapper>

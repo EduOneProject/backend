@@ -5,5 +5,4 @@ dependencies {
     api(platform(libs.mybatis.plus.bom))
     api(libs.com.baomidou.mybatis.plus.spring.boot4.starter)
     api(libs.com.baomidou.mybatis.plus.jsqlparser)
-    api(libs.org.springframework.spring.context)
 }

@@ -1,5 +1,6 @@
 plugins {
     alias libs.plugins.spring.boot
+    id("io.github.summerain0.generate-graphql-schema-document-gradle-plugin")
 }
 
 description = "Web应用启动模块"
@@ -10,4 +11,5 @@ dependencies {
     api(project(":eduone-query-gateway"))
     api(project(":eduone-query-contract-adapter"))
     api(libs.com.mysql.mysql.connector.j)
+    api(libs.graphql.java.extended.scalars)
 }

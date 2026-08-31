@@ -1,7 +1,7 @@
 package io.github.eduoneproject.eduone.query.gateway.assembler;
 
 import io.github.eduoneproject.eduone.query.gateway.response.RegionTreeResponse;
-import io.github.eduoneproject.eduone.query.kernel.service.region.dto.RegionTreeModel;
+import io.github.eduoneproject.eduone.query.kernel.service.region.model.RegionTreeModel;
 
 /**
  * 地区树模型组装器

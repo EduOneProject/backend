@@ -1,4 +1,4 @@
-package io.github.eduoneproject.eduone.query.kernel.service.region.dto;
+package io.github.eduoneproject.eduone.query.kernel.service.region.model;
 
 import lombok.Data;
 

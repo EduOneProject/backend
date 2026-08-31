@@ -7,7 +7,7 @@ import io.github.eduoneproject.eduone.query.kernel.repository.region.param.Regio
 import io.github.eduoneproject.eduone.query.kernel.service.region.RegionTreeQueryService;
 import io.github.eduoneproject.eduone.query.kernel.service.region.assembler.RegionTreeAssembler;
 import io.github.eduoneproject.eduone.query.kernel.service.region.converter.RegionTreeConverter;
-import io.github.eduoneproject.eduone.query.kernel.service.region.dto.RegionTreeModel;
+import io.github.eduoneproject.eduone.query.kernel.service.region.model.RegionTreeModel;
 import io.github.eduoneproject.eduone.query.kernel.service.region.param.RegionTreeKParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

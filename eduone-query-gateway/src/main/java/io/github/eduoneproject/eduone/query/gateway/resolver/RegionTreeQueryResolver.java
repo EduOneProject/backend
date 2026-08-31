@@ -6,7 +6,7 @@ import io.github.eduoneproject.eduone.query.gateway.converter.RegionTreeGatewayC
 import io.github.eduoneproject.eduone.query.gateway.request.RegionTreeQueryRequest;
 import io.github.eduoneproject.eduone.query.gateway.response.RegionTreeResponse;
 import io.github.eduoneproject.eduone.query.kernel.service.region.RegionTreeQueryService;
-import io.github.eduoneproject.eduone.query.kernel.service.region.dto.RegionTreeModel;
+import io.github.eduoneproject.eduone.query.kernel.service.region.model.RegionTreeModel;
 import io.github.eduoneproject.eduone.query.kernel.service.region.param.RegionTreeKParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.graphql.data.method.annotation.Argument;

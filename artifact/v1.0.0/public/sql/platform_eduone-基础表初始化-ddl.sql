@@ -87,3 +87,34 @@ CREATE TABLE `dd_region_tree`
     KEY `idx_parent_id` (`parent_id`)
 ) ENGINE = InnoDB
   ROW_FORMAT = DYNAMIC COMMENT ='地区树';
+
+CREATE TABLE `dd_business_data_dictionary`
+(
+    `id`             varchar(32) NOT NULL COMMENT '字典ID',
+    `type`           varchar(128) DEFAULT NULL COMMENT '字典类型',
+    `code`           varchar(255) DEFAULT NULL COMMENT '字典编码',
+    `name`           varchar(255) DEFAULT NULL COMMENT '字典名称',
+    `status`         varchar(100) DEFAULT NULL COMMENT '字典状态',
+    `sort`           int          DEFAULT NULL COMMENT '排序',
+    `update_user_id` varchar(32)  DEFAULT NULL COMMENT '更新人用户ID',
+    `update_time`    datetime     DEFAULT NULL COMMENT '更新时间',
+    `create_user_id` varchar(32)  DEFAULT NULL COMMENT '创建人用户ID',
+    `create_time`    datetime     DEFAULT NULL COMMENT '创建时间',
+    PRIMARY KEY (`id`) USING BTREE,
+    KEY `idx_type` (`type`, `sort`) USING BTREE,
+    KEY `idx_code` (`type`, `code`) USING BTREE
+) ENGINE = InnoDB
+  ROW_FORMAT = DYNAMIC COMMENT ='字典-业务数据字典';
+
+CREATE TABLE `dd_business_data_dictionary_type`
+(
+    `type`           varchar(128) NOT NULL COMMENT '字典类型',
+    `name`           varchar(255) DEFAULT NULL COMMENT '字典名称',
+    `desc`           varchar(500) DEFAULT NULL COMMENT '字典说明',
+    `update_user_id` varchar(32)  DEFAULT NULL COMMENT '更新人用户ID',
+    `update_time`    datetime     DEFAULT NULL COMMENT '更新时间',
+    `create_user_id` varchar(32)  DEFAULT NULL COMMENT '创建人用户ID',
+    `create_time`    datetime     DEFAULT NULL COMMENT '创建时间',
+    PRIMARY KEY (`type`) USING BTREE
+) ENGINE = InnoDB
+  ROW_FORMAT = DYNAMIC COMMENT ='字典类型';

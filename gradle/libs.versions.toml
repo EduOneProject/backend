@@ -5,6 +5,7 @@ mysqlConnectorJ = "9.7.0"
 mybatisPlusBom = "3.5.16"
 apacheCommonsCollections4 = "4.5.0"
 apacheCommonsLang3 = "3.20.0"
+graphqlJavaExtendedScalars = "24.0"
 
 [libraries]
 lombok = { module = "org.projectlombok:lombok" }
@@ -19,6 +20,7 @@ com-baomidou-mybatis-plus-jsqlparser = { module = "com.baomidou:mybatis-plus-jsq
 com-baomidou-mybatis-plus-spring-boot4-starter = { module = "com.baomidou:mybatis-plus-spring-boot4-starter" }
 org-apache-commons-commons-collections4 = { module = "org.apache.commons:commons-collections4", version.ref = "apacheCommonsCollections4" }
 org-apache-commons-commons-lang3 = { module = "org.apache.commons:commons-lang3", version.ref = "apacheCommonsLang3" }
+graphql-java-extended-scalars = { module = "com.graphql-java:graphql-java-extended-scalars", version.ref = "graphqlJavaExtendedScalars" }
 
 [plugins]
 spring-boot = { id = "org.springframework.boot", version.ref = "springBoot" }
