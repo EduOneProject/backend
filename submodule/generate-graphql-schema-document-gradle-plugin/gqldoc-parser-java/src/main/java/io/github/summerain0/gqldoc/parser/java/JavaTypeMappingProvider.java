@@ -32,6 +32,7 @@ public class JavaTypeMappingProvider implements TypeMappingProvider {
                 TypeMappingRule.simpleRule("java.lang.Long", "Long", TypeKind.SCALAR, GLOBAL_PRIORITY),
                 TypeMappingRule.simpleRule("int", "Int", TypeKind.SCALAR, GLOBAL_PRIORITY),
                 TypeMappingRule.simpleRule("java.lang.Integer", "Int", TypeKind.SCALAR, GLOBAL_PRIORITY),
+                TypeMappingRule.simpleRule("java.time.OffsetDateTime", "DateTime", TypeKind.SCALAR, GLOBAL_PRIORITY),
                 TypeMappingRule.simpleRule("java.util.Date", "DateTime", TypeKind.SCALAR, GLOBAL_PRIORITY),
                 TypeMappingRule.simpleRule("java.lang.String", "String", TypeKind.SCALAR, GLOBAL_PRIORITY),
                 new TypeMappingRule(
