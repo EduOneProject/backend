@@ -201,6 +201,7 @@ public class SdlFormatWriter {
         StringBuilder content = new StringBuilder();
         if (CollectionUtils.isNotEmpty(schemaIR.getMutationFields())) {
             List<OperationField> mutationFieldList = schemaIR.getMutationFields();
+            mutationFieldList = mutationFieldList.stream().sorted(Comparator.comparing(OperationField::getName)).toList();
             content.append("extend type Mutation {\n");
 
             for (OperationField operationField : mutationFieldList) {
@@ -227,6 +228,7 @@ public class SdlFormatWriter {
 
         if (CollectionUtils.isNotEmpty(schemaIR.getQueryFields())) {
             List<OperationField> queryFieldList = schemaIR.getQueryFields();
+            queryFieldList = queryFieldList.stream().sorted(Comparator.comparing(OperationField::getName)).toList();
             if (CollectionUtils.isNotEmpty(schemaIR.getMutationFields())) {
                 content.append("\n\n");
             }
