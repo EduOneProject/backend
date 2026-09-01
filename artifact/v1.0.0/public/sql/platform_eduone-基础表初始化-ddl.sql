@@ -94,6 +94,7 @@ CREATE TABLE `dd_business_data_dictionary`
     `type`           varchar(128) DEFAULT NULL COMMENT '字典类型',
     `code`           varchar(255) DEFAULT NULL COMMENT '字典编码',
     `name`           varchar(255) DEFAULT NULL COMMENT '字典名称',
+    `parent_id`      varchar(32)  DEFAULT NULL COMMENT '上级字典ID',
     `status`         varchar(100) DEFAULT NULL COMMENT '字典状态',
     `sort`           int          DEFAULT NULL COMMENT '排序',
     `update_user_id` varchar(32)  DEFAULT NULL COMMENT '更新人用户ID',

@@ -22,6 +22,7 @@ public class BusinessDictionaryGatewayConverter {
         BusinessDictionaryKParam param = new BusinessDictionaryKParam();
         param.setIdList(request.getIdList());
         param.setType(request.getType());
+        param.setParentId(request.getParentId());
         param.setCodeList(request.getCodeList());
         return param;
     }

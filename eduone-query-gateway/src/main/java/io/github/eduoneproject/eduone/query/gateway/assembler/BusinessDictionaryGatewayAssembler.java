@@ -20,6 +20,7 @@ public class BusinessDictionaryGatewayAssembler {
         response.setType(model.getType());
         response.setCode(model.getCode());
         response.setName(model.getName());
+        response.setParentId(model.getParentId());
         response.setStatus(model.getStatus());
         response.setSort(model.getSort());
         response.setUpdateUserId(model.getUpdateUserId());

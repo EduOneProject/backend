@@ -1,10 +1,10 @@
 extend type Query {
+    """查询业务字典"""
+    listBusinessDictionary(request: BusinessDictionaryRequest, sortList: [BusinessDictionarySortRequest]): [BusinessDictionaryResponse]
+    """查询业务字典类型"""
+    listBusinessDictionaryType(request: BusinessDictionaryTypeRequest, sortList: [BusinessDictionaryTypeSortRequest]): [BusinessDictionaryTypeResponse]
     """分页查询业务字典"""
     pageBusinessDictionary(page: PageRequest, request: BusinessDictionaryRequest, sortList: [BusinessDictionarySortRequest]): BusinessDictionaryResponseDataPage @page(for: "BusinessDictionaryResponse")
     """分页查询业务字典类型"""
     pageBusinessDictionaryType(page: PageRequest, request: BusinessDictionaryTypeRequest, sortList: [BusinessDictionaryTypeSortRequest]): BusinessDictionaryTypeResponseDataPage @page(for: "BusinessDictionaryTypeResponse")
-    """查询业务字典类型"""
-    listBusinessDictionaryType(request: BusinessDictionaryTypeRequest, sortList: [BusinessDictionaryTypeSortRequest]): [BusinessDictionaryTypeResponse]
-    """查询业务字典"""
-    listBusinessDictionary(request: BusinessDictionaryRequest, sortList: [BusinessDictionarySortRequest]): [BusinessDictionaryResponse]
 }

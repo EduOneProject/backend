@@ -27,6 +27,11 @@ public class BusinessDictionaryKParam implements Serializable {
     private String type;
 
     /**
+     * 上级字典ID
+     */
+    private String parentId;
+
+    /**
      * 字典编码集合
      */
     private List<String> codeList;

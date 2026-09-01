@@ -20,6 +20,7 @@ public class BusinessDictionaryAssembler {
         model.setType(dto.getType());
         model.setCode(dto.getCode());
         model.setName(dto.getName());
+        model.setParentId(dto.getParentId());
         model.setStatus(dto.getStatus());
         model.setSort(dto.getSort());
         model.setUpdateUserId(dto.getUpdateUserId());

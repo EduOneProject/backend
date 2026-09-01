@@ -37,6 +37,11 @@ public class BusinessDictionaryDto implements Serializable {
     private String name;
 
     /**
+     * 上级字典ID
+     */
+    private String parentId;
+
+    /**
      * 字典状态
      */
     private String status;

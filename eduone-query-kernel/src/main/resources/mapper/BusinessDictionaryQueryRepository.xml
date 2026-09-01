@@ -17,6 +17,10 @@
             <if test="@org.apache.commons.lang3.StringUtils@isNotBlank(param.type)">
                 AND businessDictionary.type = #{param.type}
             </if>
+            <!-- 上级字典ID -->
+            <if test="@org.apache.commons.lang3.StringUtils@isNotBlank(param.parentId)">
+                AND businessDictionary.parent_id = #{param.parentId}
+            </if>
             <!-- 字典编码集合 -->
             <if test="@org.apache.commons.collections4.CollectionUtils@isNotEmpty(param.codeList)">
                 AND businessDictionary.code IN
@@ -69,6 +73,7 @@
                businessDictionary.type           AS 'type',
                businessDictionary.code           AS 'code',
                businessDictionary.name           AS 'name',
+               businessDictionary.parent_id      AS 'parentId',
                businessDictionary.status         AS 'status',
                businessDictionary.sort           AS 'sort',
                businessDictionary.update_user_id AS 'updateUserId',

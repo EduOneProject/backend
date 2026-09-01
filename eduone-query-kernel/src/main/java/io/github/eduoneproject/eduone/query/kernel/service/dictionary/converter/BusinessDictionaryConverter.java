@@ -18,6 +18,7 @@ public class BusinessDictionaryConverter {
         BusinessDictionaryRParam rParam = new BusinessDictionaryRParam();
         rParam.setIdList(kParam.getIdList());
         rParam.setType(kParam.getType());
+        rParam.setParentId(kParam.getParentId());
         rParam.setCodeList(kParam.getCodeList());
         return rParam;
     }
