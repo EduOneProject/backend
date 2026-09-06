@@ -37,4 +37,14 @@ public final class SpringUtils implements BeanFactoryPostProcessor, ApplicationC
     public static String getProperty(String key) {
         return applicationContext.getEnvironment().getProperty(key);
     }
+
+    /**
+     * 获取类型为requiredType的对象
+     *
+     * @param clz bean类型
+     * @return bean对象
+     */
+    public static <T> T getBean(Class<T> clz) throws BeansException {
+        return beanFactory.getBean(clz);
+    }
 }
