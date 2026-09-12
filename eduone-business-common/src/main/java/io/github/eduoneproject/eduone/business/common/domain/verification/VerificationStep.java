@@ -42,7 +42,7 @@ public class VerificationStep implements Serializable {
     private boolean completed;
 
     /**
-     * 过期时间
+     * 过期时间(毫秒)
      */
     private Long expireTime;
 }

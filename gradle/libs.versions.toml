@@ -9,11 +9,15 @@ graphqlJavaExtendedScalars = "24.0"
 
 [libraries]
 lombok = { module = "org.projectlombok:lombok" }
+slf4j-api = { module = "org.slf4j:slf4j-api" }
 org-springframework-spring-context = { module = "org.springframework:spring-context" }
 org-springframework-boot-spring-boot = { module = "org.springframework.boot:spring-boot" }
 org-springframework-boot-spring-boot-starter-web = { module = "org.springframework.boot:spring-boot-starter-web" }
+org-springframework-boot-spring-boot-starter-data-redis = { module = "org.springframework.boot:spring-boot-starter-data-redis" }
 org-springframework-boot-spring-boot-starter-graphql = { module = "org.springframework.boot:spring-boot-starter-graphql" }
 org-springframework-boot-spring-boot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test" }
+org-springframework-boot-spring-boot-jackson = { module = "org.springframework.boot:spring-boot-jackson" }
+org-springframework-boot-spring-boot-starter-validation = { module = "org.springframework.boot:spring-boot-starter-validation" }
 junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
 com-mysql-mysql-connector-j = { module = "com.mysql:mysql-connector-j", version.ref = "mysqlConnectorJ" }
 mybatis-plus-bom = { module = "com.baomidou:mybatis-plus-bom", version.ref = "mybatisPlusBom" }

@@ -4,5 +4,6 @@ spring:
     username: ${MYSQL_USERNAME}
     password: ${MYSQL_PASSWORD}
 
+# 加解密密钥配置
 crypto-key:
   verification-context: ${CRYPTO_KEY_VERIFICATION_CONTEXT}

@@ -1,0 +1,6 @@
+extend type Mutation {
+    """请求图形验证码"""
+    applyImageCaptcha(request: ApplyImageCaptchaRequest): ImageCaptchaResponseBusinessResponse @commonBusinessResponse(for: "ImageCaptchaResponse")
+    """校验图形验证码"""
+    validateImageCaptcha(request: ImageCaptchaValidRequest): StringBusinessResponse @commonBusinessResponse(for: "String")
+}

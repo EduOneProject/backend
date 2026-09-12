@@ -3,4 +3,5 @@ description = "业务端网关模块"
 dependencies {
     api(project(":eduone-business-kernel"))
     api(libs.org.springframework.boot.spring.boot.starter.graphql)
+    api(libs.org.springframework.boot.spring.boot.starter.validation)
 }

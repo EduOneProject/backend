@@ -1,8 +1,12 @@
 package io.github.eduoneproject.eduone.config;
 
-import graphql.language.*;
+import graphql.language.FieldDefinition;
+import graphql.language.ListType;
+import graphql.language.ObjectTypeDefinition;
+import graphql.language.TypeName;
 import graphql.scalars.ExtendedScalars;
 import graphql.schema.idl.SchemaGenerator;
+import io.github.eduoneproject.eduone.config.graphql.CommonBusinessResponseDirectiveScanner;
 import io.github.eduoneproject.eduone.config.graphql.PageDirectiveScanner;
 import org.springframework.boot.graphql.autoconfigure.GraphQlSourceBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
@@ -30,6 +34,8 @@ public class GraphQLScalarConfig {
     public GraphQlSourceBuilderCustomizer graphQlSourceBuilderCustomizer() {
         PageDirectiveScanner pageDirectiveScanner = new PageDirectiveScanner();
         Set<String> pageTargetTypeSet = pageDirectiveScanner.scanPageDirectives();
+        CommonBusinessResponseDirectiveScanner commonBusinessResponseDirectiveScanner = new CommonBusinessResponseDirectiveScanner();
+        Set<String> commonBusinessResponseTargetTypeSet = commonBusinessResponseDirectiveScanner.scanDirectives();
         return builder -> builder.schemaFactory((typeDefinitionRegistry, runtimeWiring) -> {
             // 分页
             for (String targetType : pageTargetTypeSet) {
@@ -39,7 +45,7 @@ public class GraphQLScalarConfig {
                         .name(pageResultType)
                         .fieldDefinition(FieldDefinition.newFieldDefinition()
                                 .name("currentPageData")
-                                .type(new NonNullType(new ListType(new TypeName(targetType))))
+                                .type(new ListType(new TypeName(targetType)))
                                 .build())
                         .fieldDefinition(FieldDefinition.newFieldDefinition()
                                 .name("totalSize")
@@ -56,6 +62,29 @@ public class GraphQLScalarConfig {
                         .build();
 
                 typeDefinitionRegistry.add(pageResultTypeDef);
+            }
+
+            // 通用业务响应
+            for (String targetType : commonBusinessResponseTargetTypeSet) {
+                String businessResponseResultType = targetType + "BusinessResponse";
+
+                ObjectTypeDefinition commonBusinessResponseResultTypeDef = ObjectTypeDefinition.newObjectTypeDefinition()
+                        .name(businessResponseResultType)
+                        .fieldDefinition(FieldDefinition.newFieldDefinition()
+                                .name("data")
+                                .type(new TypeName(targetType))
+                                .build())
+                        .fieldDefinition(FieldDefinition.newFieldDefinition()
+                                .name("code")
+                                .type(new TypeName("String"))
+                                .build())
+                        .fieldDefinition(FieldDefinition.newFieldDefinition()
+                                .name("message")
+                                .type(new TypeName("String"))
+                                .build())
+                        .build();
+
+                typeDefinitionRegistry.add(commonBusinessResponseResultTypeDef);
             }
             SchemaGenerator schemaGenerator = new SchemaGenerator();
             return schemaGenerator.makeExecutableSchema(typeDefinitionRegistry, runtimeWiring);

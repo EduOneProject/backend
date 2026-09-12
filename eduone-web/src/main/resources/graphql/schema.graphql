@@ -1,5 +1,7 @@
 type Query
+type Mutation
 directive @page(for: String!) on FIELD_DEFINITION
+directive @commonBusinessResponse(for: String!) on FIELD_DEFINITION
 scalar DateTime
 scalar Int
 scalar Long
@@ -49,6 +51,14 @@ type BusinessDictionaryTypeResponse {
     createTime: DateTime
 }
 
+"""图形验证码响应内容"""
+type ImageCaptchaResponse {
+    """经过base64编码后的验证码图片"""
+    imageBase64: String
+    """业务Token"""
+    token: String
+}
+
 """地区树查询响应"""
 type RegionTreeResponse {
     """地区ID"""
@@ -69,6 +79,14 @@ type RegionTreeResponse {
     sort: Int
     """地区状态"""
     status: String
+}
+
+"""获取验证码请求体"""
+input ApplyImageCaptchaRequest {
+    """验证场景"""
+    verificationScene: String
+    """验证上下文token"""
+    token: String
 }
 
 """业务字典查询条件请求体"""
@@ -103,6 +121,16 @@ input BusinessDictionaryTypeSortRequest {
     field: BusinessDictionaryTypeSortField
     """排序方向"""
     direction: OrderDirection
+}
+
+"""验证图形验证码请求体"""
+input ImageCaptchaValidRequest {
+    """验证场景"""
+    verificationScene: String
+    """校验上下文token"""
+    token: String
+    """验证码"""
+    code: String
 }
 
 """分页请求条件"""

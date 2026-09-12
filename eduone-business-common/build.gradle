@@ -3,4 +3,5 @@ description = "业务端通用模块"
 dependencies {
     api(project(":eduone-common"))
     api(libs.org.springframework.boot.spring.boot)
+    api(libs.org.springframework.boot.spring.boot.starter.data.redis)
 }

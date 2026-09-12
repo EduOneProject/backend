@@ -3,4 +3,5 @@ description = "业务端核心模块"
 dependencies {
     api(project(":eduone-business-common"))
     api(project(":eduone-query-contract"))
+    api(project(":submodule:library-kaptcha"))
 }
