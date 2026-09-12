@@ -47,6 +47,31 @@ public class EduOneTypeMappingProvider implements TypeMappingProvider {
                                     .directives(directives)
                                     .build();
                         }
+                ),
+                new TypeMappingRule(
+                        "io.github.eduoneproject.eduone.business.gateway.response.CommonBusinessResponse",
+                        Integer.MAX_VALUE,
+                        (qualifiedName, context) -> null, // 通过指令动态生成
+                        (qualifiedName, genericArgs) -> {
+                            if (genericArgs.size() != 1) {
+                                throw new IllegalArgumentException("CommonBusinessResponse应当有且只有一个泛型");
+                            }
+                            TypeRef typeRef = genericArgs.get(0);
+                            // 名称
+                            String typeRefName = typeRef.getName();
+                            String simpleName = typeRefName + "BusinessResponse";
+                            // 指令
+                            List<DirectiveRef> directives = new ArrayList<>();
+                            DirectiveRef directiveRef = DirectiveRef.builder()
+                                    .name("commonBusinessResponse")
+                                    .arguments(Map.of("for", typeRefName))
+                                    .build();
+                            directives.add(directiveRef);
+                            return TypeRef.builder()
+                                    .name(simpleName)
+                                    .directives(directives)
+                                    .build();
+                        }
                 )
         );
     }

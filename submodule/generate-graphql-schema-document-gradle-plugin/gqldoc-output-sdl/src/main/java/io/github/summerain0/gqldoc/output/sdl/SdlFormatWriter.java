@@ -97,6 +97,7 @@ public class SdlFormatWriter {
             content.append("type Mutation\n");
         }
         content.append("directive @page(for: String!) on FIELD_DEFINITION\n");
+        content.append("directive @commonBusinessResponse(for: String!) on FIELD_DEFINITION\n");
 
         // 解析类型
         if (CollectionUtils.isEmpty(typeDefList)) {
