@@ -4,4 +4,13 @@ dependencies {
     api(project(":eduone-business-common"))
     api(project(":eduone-query-contract"))
     api(project(":submodule:library-kaptcha"))
+    api(libs.jakarta.servlet.api)
+    api(libs.org.springframework.boot.spring.boot.starter.security)
+    api(platform(libs.jsonwebtoken.jjwt.bom))
+    api(libs.jsonwebtoken.jjwt.api)
+    api(libs.jsonwebtoken.jjwt.impl)
+    api(libs.jsonwebtoken.jjwt.jackson)
+    api(platform(libs.mybatis.plus.bom))
+    api(libs.com.baomidou.mybatis.plus.spring.boot4.starter)
+    api(libs.com.baomidou.mybatis.plus.jsqlparser)
 }

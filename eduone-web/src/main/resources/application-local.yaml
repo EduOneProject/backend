@@ -16,11 +16,13 @@ spring:
 # 加解密密钥配置
 crypto-key:
   verification-context: fUTSNaZ3Jh/FZf4iHpZWizXEH1ofwr8sJHgNyAVWamw=
+  access-token-jwt-secret: dev-only-256-bit-secret-change-in-production-12345678
 
-# 验证相关配置
-captcha:
-  expiration:
-    image-captcha: 5m
+# 过期时间配置
+expiration:
+  image-captcha: 5m
+  access-token: 15m
+  refresh-token: 30d
 
 # 前端应用相关配置
 frontend-application:

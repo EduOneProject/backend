@@ -3,6 +3,7 @@ description = "项目通用模块"
 dependencies {
     api(libs.org.apache.commons.commons.lang3)
     api(libs.org.apache.commons.commons.collections4)
+    api(libs.commons.codec)
     api(libs.org.springframework.spring.context)
     api(libs.org.springframework.boot.spring.boot.jackson)
     api(libs.slf4j.api)

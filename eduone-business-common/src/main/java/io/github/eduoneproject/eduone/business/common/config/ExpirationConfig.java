@@ -7,16 +7,26 @@ import org.springframework.stereotype.Component;
 import java.time.Duration;
 
 /**
- * 验证码过期时间配置
+ * 过期时间配置
  *
  * @author summerain0
  */
 @Data
 @Component
-@ConfigurationProperties("captcha.expiration")
-public class CaptchaExpirationConfig {
+@ConfigurationProperties("expiration")
+public class ExpirationConfig {
     /**
      * 图形验证码过期时间
      */
     private Duration imageCaptcha;
+
+    /**
+     * 访问令牌过期时间
+     */
+    private Duration accessToken;
+
+    /**
+     * 刷新令牌过期时间
+     */
+    private Duration refreshToken;
 }

@@ -2,4 +2,7 @@ description = "事件投影模块"
 
 dependencies {
     api(project(":eduone-domain-api"))
+    api(platform(libs.mybatis.plus.bom))
+    api(libs.com.baomidou.mybatis.plus.spring.boot4.starter)
+    api(libs.com.baomidou.mybatis.plus.jsqlparser)
 }

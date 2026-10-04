@@ -14,6 +14,9 @@ public enum CommonExceptionCode {
     PARAM_REQUIRED(400_000_001, "参数不能为空"),
     PARAM_INVALID(400_000_002, "参数非法"),
 
+    // 未登录
+    UNAUTHORIZED(401_000_001, "未登录"),
+
     // 内部异常
     INTERNAL_ERROR(500_000_000, "内部错误");
 

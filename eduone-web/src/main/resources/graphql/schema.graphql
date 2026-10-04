@@ -81,6 +81,16 @@ type RegionTreeResponse {
     status: String
 }
 
+"""用户登录成功响应体"""
+type UserLoginSuccessResponse {
+    """用户ID"""
+    userId: String
+    """访问令牌"""
+    accessToken: String
+    """刷新令牌"""
+    refreshToken: String
+}
+
 """获取验证码请求体"""
 input ApplyImageCaptchaRequest {
     """验证场景"""
@@ -131,6 +141,12 @@ input ImageCaptchaValidRequest {
     token: String
     """验证码"""
     code: String
+}
+
+input LoginWithPasswordRequest {
+    account: String
+    password: String
+    token: String
 }
 
 """分页请求条件"""

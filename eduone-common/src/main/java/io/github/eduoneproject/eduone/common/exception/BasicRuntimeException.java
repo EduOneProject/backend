@@ -61,4 +61,11 @@ public class BasicRuntimeException extends RuntimeException {
     public BasicRuntimeException(String message) {
         this(CommonExceptionCode.INTERNAL_ERROR.getCode(), message);
     }
+
+    /**
+     * 未登录异常
+     */
+    public static BasicRuntimeException unauthorized() {
+        return new BasicRuntimeException(CommonExceptionCode.UNAUTHORIZED.getCode(), "未登录");
+    }
 }

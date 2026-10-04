@@ -19,7 +19,13 @@ public enum BusinessExceptionCode {
 
     // 验证码
     CAPTCHA_EXPIRED(400_002_001, "验证码已过期，请重新获取"),
-    CAPTCHA_INVALID(400_002_002, "验证码错误");
+    CAPTCHA_INVALID(400_002_002, "验证码错误"),
+
+    // 鉴权部分
+    ACCOUNT_NOT_FOUND(500_003_001, "账号不存在"),
+    ACCOUNT_PASSWORD_INVALID(500_003_002, "账号密码错误"),
+    ACCOUNT_INACTIVE(500_003_003, "账号已禁用"),
+    ACCOUNT_AUTH_INACTIVE(500_003_004, "账号认证已禁用");
 
     /**
      * 错误码

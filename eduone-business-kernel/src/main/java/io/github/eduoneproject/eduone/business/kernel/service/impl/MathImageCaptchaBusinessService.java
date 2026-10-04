@@ -1,7 +1,7 @@
 package io.github.eduoneproject.eduone.business.kernel.service.impl;
 
 import com.google.code.kaptcha.impl.DefaultKaptcha;
-import io.github.eduoneproject.eduone.business.common.config.CaptchaExpirationConfig;
+import io.github.eduoneproject.eduone.business.common.config.ExpirationConfig;
 import io.github.eduoneproject.eduone.business.common.consts.BusinessExceptionCode;
 import io.github.eduoneproject.eduone.business.common.support.RedisCache;
 import io.github.eduoneproject.eduone.business.kernel.service.CaptchaBusinessService;
@@ -49,7 +49,7 @@ public class MathImageCaptchaBusinessService implements CaptchaBusinessService<S
     /**
      * 验证码过期配置
      */
-    private final CaptchaExpirationConfig captchaExpirationConfig;
+    private final ExpirationConfig expirationConfig;
 
     @Override
     public CaptchaGenerationResult<String> generate(MathImageCaptchaGenerationParam param) {
@@ -72,7 +72,7 @@ public class MathImageCaptchaBusinessService implements CaptchaBusinessService<S
             // 缓存结果
             String uniqueId = UUID.randomUUID().toString();
             OffsetDateTime offsetDateTime = OffsetDateTime.now();
-            Duration duration = captchaExpirationConfig.getImageCaptcha();
+            Duration duration = expirationConfig.getImageCaptcha();
             redisCache.setCacheObject(getRedisKey(uniqueId), answer, duration);
             // 封装结果
             CaptchaGenerationResult<String> result = new CaptchaGenerationResult<>();

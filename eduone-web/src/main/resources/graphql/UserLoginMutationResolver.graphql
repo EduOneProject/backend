@@ -1,0 +1,4 @@
+extend type Mutation {
+    """以密码方式登录"""
+    loginWithPassword(request: LoginWithPasswordRequest): UserLoginSuccessResponseBusinessResponse @commonBusinessResponse(for: "UserLoginSuccessResponse")
+}

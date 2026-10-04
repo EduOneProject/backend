@@ -17,4 +17,9 @@ public class CryptoKeyConfig {
      * 验证上下文
      */
     private String verificationContext;
+
+    /**
+     * 访问令牌JWT密钥
+     */
+    private String accessTokenJwtSecret;
 }

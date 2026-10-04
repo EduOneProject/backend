@@ -1,4 +1,5 @@
 description = "查询端对外接口契约模块"
 
 dependencies {
+    api(project(":eduone-domain-api"))
 }
