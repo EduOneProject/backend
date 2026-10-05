@@ -39,7 +39,7 @@ public class GraphQlAuthenticationEntryPoint implements AuthenticationEntryPoint
         extensions.put("retryable", false);
 
         GraphQLError error = GraphqlErrorBuilder.newError()
-                .errorType(ErrorType.BAD_REQUEST)
+                .errorType(ErrorType.UNAUTHORIZED)
                 .message(CommonExceptionCode.UNAUTHORIZED.getDescription())
                 .extensions(extensions)
                 .build();
