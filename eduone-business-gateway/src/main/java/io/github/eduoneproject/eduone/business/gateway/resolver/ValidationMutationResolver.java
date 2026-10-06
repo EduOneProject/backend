@@ -13,6 +13,7 @@ import io.github.eduoneproject.eduone.business.kernel.service.model.CaptchaGener
 import io.github.eduoneproject.eduone.business.kernel.service.model.CaptchaValidationResult;
 import io.github.eduoneproject.eduone.business.kernel.service.param.CaptchaValidationParam;
 import io.github.eduoneproject.eduone.business.kernel.service.param.MathImageCaptchaGenerationParam;
+import io.github.eduoneproject.eduone.common.annotation.OptionalLogin;
 import io.github.eduoneproject.eduone.common.exception.BasicRuntimeException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +39,7 @@ public class ValidationMutationResolver {
      * @param request 图形验证码请求参数
      * @return 图形验证码信息
      */
+    @OptionalLogin
     @MutationMapping
     public CommonBusinessResponse<ImageCaptchaResponse> applyImageCaptcha(@Argument @Valid ApplyImageCaptchaRequest request) {
         // 检查token
@@ -81,6 +83,7 @@ public class ValidationMutationResolver {
      * @param request 图形验证码校验请求参数
      * @return 校验结果
      */
+    @OptionalLogin
     @MutationMapping
     public CommonBusinessResponse<String> validateImageCaptcha(@Argument @Valid ImageCaptchaValidRequest request) {
         // 检查token

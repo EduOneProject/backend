@@ -1,5 +1,6 @@
 package io.github.eduoneproject.eduone.query.gateway.resolver;
 
+import io.github.eduoneproject.eduone.common.annotation.OptionalLogin;
 import io.github.eduoneproject.eduone.query.common.converter.CommonConverter;
 import io.github.eduoneproject.eduone.query.gateway.assembler.RegionTreeGatewayAssembler;
 import io.github.eduoneproject.eduone.query.gateway.converter.RegionTreeGatewayConverter;
@@ -32,6 +33,7 @@ public class RegionTreeQueryResolver {
      * @return 地区树
      */
     @QueryMapping
+    @OptionalLogin
     public List<RegionTreeResponse> listRegionTree(@Argument RegionTreeQueryRequest request) {
         RegionTreeKParam kParam = RegionTreeGatewayConverter.convert(request);
         List<RegionTreeModel> modelList = regionTreeQueryService.getRegionTreeList(kParam);

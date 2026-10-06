@@ -1,5 +1,6 @@
 package io.github.eduoneproject.eduone.query.gateway.resolver;
 
+import io.github.eduoneproject.eduone.common.annotation.OptionalLogin;
 import io.github.eduoneproject.eduone.common.domain.DataPage;
 import io.github.eduoneproject.eduone.query.common.converter.CommonConverter;
 import io.github.eduoneproject.eduone.query.gateway.assembler.BusinessDictionaryGatewayAssembler;
@@ -44,6 +45,7 @@ public class BusinessDictionaryQueryResolver {
      * @return 业务字典列表
      */
     @QueryMapping
+    @OptionalLogin
     public List<BusinessDictionaryResponse> listBusinessDictionary(@Argument BusinessDictionaryRequest request, @Argument List<BusinessDictionarySortRequest> sortList) {
         BusinessDictionaryKParam param = BusinessDictionaryGatewayConverter.convert(request);
         List<BusinessDictionarySortParam> sortParamList = CommonConverter.convert(sortList, BusinessDictionaryGatewayConverter::convert);
@@ -60,6 +62,7 @@ public class BusinessDictionaryQueryResolver {
      * @return 业务字典列表
      */
     @QueryMapping
+    @OptionalLogin
     public DataPage<BusinessDictionaryResponse> pageBusinessDictionary(@Argument PageRequest page, @Argument BusinessDictionaryRequest request, @Argument List<BusinessDictionarySortRequest> sortList) {
         DataPage<BusinessDictionaryModel> convertPage = CommonConverter.convert(CommonQueryGatewayConverter.convert(page));
         BusinessDictionaryKParam param = BusinessDictionaryGatewayConverter.convert(request);
@@ -76,6 +79,7 @@ public class BusinessDictionaryQueryResolver {
      * @return 业务字典类型列表
      */
     @QueryMapping
+    @OptionalLogin
     public List<BusinessDictionaryTypeResponse> listBusinessDictionaryType(@Argument BusinessDictionaryTypeRequest request, @Argument List<BusinessDictionaryTypeSortRequest> sortList) {
         BusinessDictionaryTypeKParam param = BusinessDictionaryGatewayConverter.convert(request);
         List<BusinessDictionaryTypeSortParam> sortParamList = CommonConverter.convert(sortList, BusinessDictionaryGatewayConverter::convert);
@@ -92,6 +96,7 @@ public class BusinessDictionaryQueryResolver {
      * @return 业务字典类型列表
      */
     @QueryMapping
+    @OptionalLogin
     public DataPage<BusinessDictionaryTypeResponse> pageBusinessDictionaryType(@Argument PageRequest page, @Argument BusinessDictionaryTypeRequest request, @Argument List<BusinessDictionaryTypeSortRequest> sortList) {
         DataPage<BusinessDictionaryTypeModel> convertPage = CommonConverter.convert(CommonQueryGatewayConverter.convert(page));
         BusinessDictionaryTypeKParam param = BusinessDictionaryGatewayConverter.convert(request);
