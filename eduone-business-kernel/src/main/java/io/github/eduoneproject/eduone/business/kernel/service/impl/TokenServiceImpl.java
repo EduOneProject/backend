@@ -1,8 +1,6 @@
 package io.github.eduoneproject.eduone.business.kernel.service.impl;
 
 import io.github.eduoneproject.eduone.business.common.config.ExpirationConfig;
-import io.github.eduoneproject.eduone.business.kernel.repository.AuthRefreshTokenRepository;
-import io.github.eduoneproject.eduone.business.kernel.repository.pojo.AuthRefreshTokenPO;
 import io.github.eduoneproject.eduone.business.kernel.service.TokenService;
 import io.github.eduoneproject.eduone.business.kernel.service.param.CreateRefreshTokenParam;
 import io.github.eduoneproject.eduone.common.exception.BasicRuntimeException;
@@ -34,7 +32,6 @@ public class TokenServiceImpl implements TokenService {
     @Qualifier("accessTokenSecretKey")
     private final SecretKey accessTokenSecretKey;
     private final ExpirationConfig expirationConfig;
-    private final AuthRefreshTokenRepository authRefreshTokenRepository;
 
     @Override
     public String createAccessToken(String userId) {
@@ -58,20 +55,6 @@ public class TokenServiceImpl implements TokenService {
         String hash = DigestUtils.sha256Hex(id);
         OffsetDateTime currentDate = OffsetDateTime.now();
         OffsetDateTime expirationDate = currentDate.plus(expirationConfig.getRefreshToken());
-
-        AuthRefreshTokenPO pojo = new AuthRefreshTokenPO();
-        pojo.setId(id);
-        pojo.setTokenHash(hash);
-        pojo.setUserId(param.getUserId());
-        pojo.setExpiresTime(expirationDate);
-        pojo.setUsed(false);
-        pojo.setCreatedTime(currentDate);
-        pojo.setRevoked(false);
-        pojo.setDeviceId(param.getDeviceId());
-        pojo.setUserAgent(param.getUserAgent());
-        pojo.setIpAddress(param.getIpAddress());
-        authRefreshTokenRepository.insert(pojo);
-
         return id;
     }
 

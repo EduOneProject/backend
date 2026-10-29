@@ -6,6 +6,7 @@ import io.github.eduoneproject.eduone.business.gateway.response.UserLoginSuccess
 import io.github.eduoneproject.eduone.business.kernel.appservice.AuthAppService;
 import io.github.eduoneproject.eduone.business.kernel.service.model.LoginSuccessResult;
 import io.github.eduoneproject.eduone.business.kernel.service.param.LoginWithPasswordParam;
+import io.github.eduoneproject.eduone.common.annotation.OptionalLogin;
 import lombok.RequiredArgsConstructor;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
@@ -27,6 +28,7 @@ public class UserLoginMutationResolver {
      * @param request 登录请求参数
      * @return 登录结果
      */
+    @OptionalLogin
     @MutationMapping
     public CommonBusinessResponse<UserLoginSuccessResponse> loginWithPassword(@Argument LoginWithPasswordRequest request) {
         LoginWithPasswordParam param = new LoginWithPasswordParam();
