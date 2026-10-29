@@ -1,6 +1,8 @@
 description = "查询端接口契约实现模块"
 
 dependencies {
-    api(project(":eduone-query-contract"))
-    api(project(":eduone-query-kernel"))
+    implementation(project(":eduone-query-contract"))
+    implementation(project(":eduone-query-kernel"))
+    implementation(libs.springContext)
+    implementation(libs.commonsLang3)
 }

@@ -1,16 +1,23 @@
 description = "业务端核心模块"
 
 dependencies {
-    api(project(":eduone-business-common"))
-    api(project(":eduone-query-contract"))
-    api(project(":submodule:library-kaptcha"))
-    api(libs.jakarta.servlet.api)
-    api(libs.org.springframework.boot.spring.boot.starter.security)
-    api(platform(libs.jsonwebtoken.jjwt.bom))
-    api(libs.jsonwebtoken.jjwt.api)
-    api(libs.jsonwebtoken.jjwt.impl)
-    api(libs.jsonwebtoken.jjwt.jackson)
-    api(platform(libs.mybatis.plus.bom))
-    api(libs.com.baomidou.mybatis.plus.spring.boot4.starter)
-    api(libs.com.baomidou.mybatis.plus.jsqlparser)
+    implementation(project(":eduone-domain-api"))
+    implementation(project(":eduone-common"))
+    implementation(project(":eduone-business-common"))
+    implementation(project(":eduone-query-contract"))
+    implementation(project(":submodule:library-kaptcha"))
+
+    implementation(libs.slf4jApi)
+    implementation(libs.commonsCodec)
+    implementation(libs.commonsLang3)
+    implementation(libs.springSecurityCore)
+    implementation(libs.springSecurityConfig)
+    implementation(libs.springSecurityWeb)
+    implementation(libs.springWeb)
+    implementation(platform(libs.jjwtBom))
+    implementation(libs.jjwtApi)
+
+    compileOnly(libs.jakartaServletApi)
+    runtimeOnly(libs.jjwtImpl)
+    runtimeOnly(libs.jjwtJackson)
 }

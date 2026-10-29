@@ -11,32 +11,40 @@ jsonwebtokenJjwtBom = "0.13.0"
 
 [libraries]
 lombok = { module = "org.projectlombok:lombok" }
-slf4j-api = { module = "org.slf4j:slf4j-api" }
-jakarta-servlet-api = { module = "jakarta.servlet:jakarta.servlet-api" }
-org-springframework-spring-context = { module = "org.springframework:spring-context" }
-org-springframework-boot-spring-boot = { module = "org.springframework.boot:spring-boot" }
-org-springframework-boot-spring-boot-starter-web = { module = "org.springframework.boot:spring-boot-starter-web" }
-org-springframework-boot-spring-boot-starter-aspectj = { module = "org.springframework.boot:spring-boot-starter-aspectj" }
-org-springframework-boot-spring-boot-starter-data-redis = { module = "org.springframework.boot:spring-boot-starter-data-redis" }
-org-springframework-boot-spring-boot-starter-graphql = { module = "org.springframework.boot:spring-boot-starter-graphql" }
-org-springframework-boot-spring-boot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test" }
-org-springframework-boot-spring-boot-jackson = { module = "org.springframework.boot:spring-boot-jackson" }
-org-springframework-boot-spring-boot-starter-validation = { module = "org.springframework.boot:spring-boot-starter-validation" }
-org-springframework-boot-spring-boot-starter-security = { module = "org.springframework.boot:spring-boot-starter-security" }
-junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
-com-mysql-mysql-connector-j = { module = "com.mysql:mysql-connector-j", version.ref = "mysqlConnectorJ" }
-mybatis-plus-bom = { module = "com.baomidou:mybatis-plus-bom", version.ref = "mybatisPlusBom" }
-com-baomidou-mybatis-plus-jsqlparser = { module = "com.baomidou:mybatis-plus-jsqlparser" }
-com-baomidou-mybatis-plus-spring-boot4-starter = { module = "com.baomidou:mybatis-plus-spring-boot4-starter" }
-org-apache-commons-commons-collections4 = { module = "org.apache.commons:commons-collections4", version.ref = "apacheCommonsCollections4" }
-org-apache-commons-commons-lang3 = { module = "org.apache.commons:commons-lang3", version.ref = "apacheCommonsLang3" }
-commons-codec = { module = "commons-codec:commons-codec", version.ref = "apacheCommonsCodec" }
-graphql-java-extended-scalars = { module = "com.graphql-java:graphql-java-extended-scalars", version.ref = "graphqlJavaExtendedScalars" }
-jsonwebtoken-jjwt-bom = { module = "io.jsonwebtoken:jjwt-bom", version.ref = "jsonwebtokenJjwtBom" }
-jsonwebtoken-jjwt-api = { module = "io.jsonwebtoken:jjwt-api", version.ref = "jsonwebtokenJjwtBom" }
-jsonwebtoken-jjwt-impl = { module = "io.jsonwebtoken:jjwt-impl", version.ref = "jsonwebtokenJjwtBom" }
-jsonwebtoken-jjwt-jackson = { module = "io.jsonwebtoken:jjwt-jackson", version.ref = "jsonwebtokenJjwtBom" }
+slf4jApi = { module = "org.slf4j:slf4j-api" }
+jakartaServletApi = { module = "jakarta.servlet:jakarta.servlet-api" }
+springContext = { module = "org.springframework:spring-context" }
+springBoot = { module = "org.springframework.boot:spring-boot" }
+springBootStarterWeb = { module = "org.springframework.boot:spring-boot-starter-web" }
+springBootStarterAspectj = { module = "org.springframework.boot:spring-boot-starter-aspectj" }
+springBootStarterDataRedis = { module = "org.springframework.boot:spring-boot-starter-data-redis" }
+springBootStarterGraphql = { module = "org.springframework.boot:spring-boot-starter-graphql" }
+springBootStarterTest = { module = "org.springframework.boot:spring-boot-starter-test" }
+springBootStarterValidation = { module = "org.springframework.boot:spring-boot-starter-validation" }
+springBootStarterSecurity = { module = "org.springframework.boot:spring-boot-starter-security" }
+junitPlatformLauncher = { module = "org.junit.platform:junit-platform-launcher" }
+mybatisPlusJsqlparser = { module = "com.baomidou:mybatis-plus-jsqlparser" }
+mybatisPlusSpringBoot4Starter = { module = "com.baomidou:mybatis-plus-spring-boot4-starter" }
+graphqlJavaExtendedScalars = { module = "com.graphql-java:graphql-java-extended-scalars", version.ref = "graphqlJavaExtendedScalars" }
+jjwtApi = { module = "io.jsonwebtoken:jjwt-api", version.ref = "jsonwebtokenJjwtBom" }
+jjwtImpl = { module = "io.jsonwebtoken:jjwt-impl", version.ref = "jsonwebtokenJjwtBom" }
+jjwtJackson = { module = "io.jsonwebtoken:jjwt-jackson", version.ref = "jsonwebtokenJjwtBom" }
+springWeb = { module = "org.springframework:spring-web" }
+springDataRedis = { module = "org.springframework.data:spring-data-redis" }
+springSecurityCore = { module = "org.springframework.security:spring-security-core" }
+springSecurityConfig = { module = "org.springframework.security:spring-security-config" }
+springSecurityWeb = { module = "org.springframework.security:spring-security-web" }
+jacksonDatabind = { module = "tools.jackson.core:jackson-databind" }
+mybatisPlusCore = { module = "com.baomidou:mybatis-plus-core" }
+mybatisPlusExtension = { module = "com.baomidou:mybatis-plus-extension" }
+# 有显式指定版本的引用
+mysqlConnectorJ = { module = "com.mysql:mysql-connector-j", version.ref = "mysqlConnectorJ" }
+mybatisPlusBom = { module = "com.baomidou:mybatis-plus-bom", version.ref = "mybatisPlusBom" }
+commonsCollections4 = { module = "org.apache.commons:commons-collections4", version.ref = "apacheCommonsCollections4" }
+commonsLang3 = { module = "org.apache.commons:commons-lang3", version.ref = "apacheCommonsLang3" }
+commonsCodec = { module = "commons-codec:commons-codec", version.ref = "apacheCommonsCodec" }
+jjwtBom = { module = "io.jsonwebtoken:jjwt-bom", version.ref = "jsonwebtokenJjwtBom" }
 
 [plugins]
-spring-boot = { id = "org.springframework.boot", version.ref = "springBoot" }
-spring-dependency-management = { id = "io.spring.dependency-management", version.ref = "springDependencyManagement" }
+springBoot = { id = "org.springframework.boot", version.ref = "springBoot" }
+springDependencyManagement = { id = "io.spring.dependency-management", version.ref = "springDependencyManagement" }

@@ -1,15 +1,28 @@
 plugins {
-    alias libs.plugins.spring.boot
+    alias libs.plugins.springBoot
     id("io.github.summerain0.generate-graphql-schema-document-gradle-plugin")
 }
 
 description = "Web应用启动模块"
 
 dependencies {
-    api(project(":eduone-repository"))
-    api(project(":eduone-business-gateway"))
-    api(project(":eduone-query-gateway"))
-    api(project(":eduone-query-contract-adapter"))
-    api(libs.com.mysql.mysql.connector.j)
-    api(libs.graphql.java.extended.scalars)
+    implementation(project(":eduone-common"))
+    implementation(project(":eduone-business-gateway"))
+    implementation(project(":eduone-query-gateway"))
+    implementation(project(":eduone-repository"))
+    implementation(project(":eduone-query-contract-adapter"))
+    implementation(libs.springBootStarterWeb)
+    implementation(libs.springBootStarterGraphql)
+    implementation(libs.springBootStarterDataRedis)
+    implementation(libs.springBootStarterAspectj)
+    implementation(libs.springBootStarterSecurity)
+    implementation(libs.springBootStarterValidation)
+    implementation(platform(libs.mybatisPlusBom))
+    implementation(libs.mybatisPlusSpringBoot4Starter)
+    implementation(libs.mybatisPlusJsqlparser)
+    implementation(libs.graphqlJavaExtendedScalars)
+    implementation(libs.slf4jApi)
+
+    runtimeOnly(libs.mysqlConnectorJ)
+    testImplementation(project(":eduone-business-common"))
 }

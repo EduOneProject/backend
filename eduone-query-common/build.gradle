@@ -1,8 +1,8 @@
 description = "查询端通用模块"
 
 dependencies {
-    api(project(":eduone-common"))
-    api(platform(libs.mybatis.plus.bom))
-    api(libs.com.baomidou.mybatis.plus.spring.boot4.starter)
-    api(libs.com.baomidou.mybatis.plus.jsqlparser)
+    implementation(project(":eduone-common"))
+    implementation(platform(libs.mybatisPlusBom))
+    implementation(libs.mybatisPlusExtension)
+    implementation(libs.commonsCollections4)
 }
