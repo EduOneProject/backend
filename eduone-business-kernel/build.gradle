@@ -5,7 +5,6 @@ dependencies {
     implementation(project(":eduone-common"))
     implementation(project(":eduone-business-common"))
     implementation(project(":eduone-query-contract"))
-    implementation(project(":submodule:library-kaptcha"))
 
     implementation(libs.slf4jApi)
     implementation(libs.commonsCodec)
@@ -16,6 +15,9 @@ dependencies {
     implementation(libs.springWeb)
     implementation(platform(libs.jjwtBom))
     implementation(libs.jjwtApi)
+    implementation(libs.kaptcha) {
+        exclude(group: "javax.servlet", module: "javax.servlet-api")
+    }
 
     compileOnly(libs.jakartaServletApi)
     runtimeOnly(libs.jjwtImpl)
