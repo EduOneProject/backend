@@ -1,6 +1,8 @@
 package io.github.eduoneproject.eduone.business.gateway.response;
 
+import io.github.eduoneproject.eduone.business.common.consts.BusinessExceptionCode;
 import io.github.eduoneproject.eduone.business.gateway.enums.CommonResponseCode;
+import io.github.eduoneproject.eduone.common.exception.BasicRuntimeException;
 import lombok.Data;
 
 import java.io.Serial;
@@ -55,6 +57,32 @@ public class CommonBusinessResponse<T> implements Serializable {
         response.setCode(CommonResponseCode.SUCCESS.getCode());
         response.setMessage(CommonResponseCode.SUCCESS.getMessage());
         response.setData(data);
+        return response;
+    }
+
+    /**
+     * 创建失败响应
+     *
+     * @param businessExceptionCode 响应码
+     * @return 响应体
+     */
+    public static <T> CommonBusinessResponse<T> failure(BusinessExceptionCode businessExceptionCode) {
+        CommonBusinessResponse<T> response = new CommonBusinessResponse<>();
+        response.setCode(String.valueOf(businessExceptionCode.getCode()));
+        response.setMessage(businessExceptionCode.getDescription());
+        return response;
+    }
+
+    /**
+     * 创建失败响应
+     *
+     * @param e 异常
+     * @return 响应体
+     */
+    public static <T> CommonBusinessResponse<T> failure(BasicRuntimeException e) {
+        CommonBusinessResponse<T> response = new CommonBusinessResponse<>();
+        response.setCode(String.valueOf(e.getCode()));
+        response.setMessage(e.getMessage());
         return response;
     }
 }

@@ -45,36 +45,31 @@ public class ValidationMutationResolver {
         // 检查token
         VerificationContext verificationContext = VerificationContext.decrypt(request.getToken());
         if (verificationContext == null) {
-            throw new BasicRuntimeException(
-                    BusinessExceptionCode.VERIFICATION_CONTEXT_INVALID.getCode(),
-                    BusinessExceptionCode.VERIFICATION_CONTEXT_INVALID.getDescription()
-            );
+            return CommonBusinessResponse.failure(BusinessExceptionCode.VERIFICATION_CONTEXT_INVALID);
         }
         VerificationStep imageCaptchaStep = verificationContext.getStep(request.getVerificationScene(), VerificationType.IMAGE_CAPTCHA);
         if (imageCaptchaStep == null) {
-            throw new BasicRuntimeException(
-                    BusinessExceptionCode.VERIFICATION_STEP_NOT_REQUIRED.getCode(),
-                    BusinessExceptionCode.VERIFICATION_STEP_NOT_REQUIRED.getDescription()
-            );
+            return CommonBusinessResponse.failure(BusinessExceptionCode.VERIFICATION_STEP_NOT_REQUIRED);
         }
         if (imageCaptchaStep.isCompleted()) {
-            throw new BasicRuntimeException(
-                    BusinessExceptionCode.VERIFICATION_STEP_ALREADY_VERIFIED.getCode(),
-                    BusinessExceptionCode.VERIFICATION_STEP_ALREADY_VERIFIED.getDescription()
-            );
+            return CommonBusinessResponse.failure(BusinessExceptionCode.VERIFICATION_STEP_ALREADY_VERIFIED);
         }
 
         // 生成验证码
-        MathImageCaptchaGenerationParam captchaGenerationParam = new MathImageCaptchaGenerationParam();
-        CaptchaGenerationResult<String> captchaGenerationResult = mathImageCaptchaBusinessService.generate(captchaGenerationParam);
-        imageCaptchaStep.setUniqueId(captchaGenerationResult.getUniqueId());
-        imageCaptchaStep.setExpireTime(captchaGenerationResult.getExpirationTime().toInstant().toEpochMilli());
+        try {
+            MathImageCaptchaGenerationParam captchaGenerationParam = new MathImageCaptchaGenerationParam();
+            CaptchaGenerationResult<String> captchaGenerationResult = mathImageCaptchaBusinessService.generate(captchaGenerationParam);
+            imageCaptchaStep.setUniqueId(captchaGenerationResult.getUniqueId());
+            imageCaptchaStep.setExpireTime(captchaGenerationResult.getExpirationTime().toInstant().toEpochMilli());
 
-        // 构建响应
-        ImageCaptchaResponse response = new ImageCaptchaResponse();
-        response.setImageBase64(captchaGenerationResult.getData());
-        response.setToken(VerificationContext.encrypt(verificationContext));
-        return CommonBusinessResponse.success(response);
+            // 构建响应
+            ImageCaptchaResponse response = new ImageCaptchaResponse();
+            response.setImageBase64(captchaGenerationResult.getData());
+            response.setToken(VerificationContext.encrypt(verificationContext));
+            return CommonBusinessResponse.success(response);
+        } catch (BasicRuntimeException e) {
+            return CommonBusinessResponse.failure(e);
+        }
     }
 
     /**
@@ -89,23 +84,14 @@ public class ValidationMutationResolver {
         // 检查token
         VerificationContext verificationContext = VerificationContext.decrypt(request.getToken());
         if (verificationContext == null) {
-            throw new BasicRuntimeException(
-                    BusinessExceptionCode.VERIFICATION_CONTEXT_INVALID.getCode(),
-                    BusinessExceptionCode.VERIFICATION_CONTEXT_INVALID.getDescription()
-            );
+            return CommonBusinessResponse.failure(BusinessExceptionCode.VERIFICATION_CONTEXT_INVALID);
         }
         VerificationStep imageCaptchaStep = verificationContext.getStep(request.getVerificationScene(), VerificationType.IMAGE_CAPTCHA);
         if (imageCaptchaStep == null) {
-            throw new BasicRuntimeException(
-                    BusinessExceptionCode.VERIFICATION_STEP_NOT_REQUIRED.getCode(),
-                    BusinessExceptionCode.VERIFICATION_STEP_NOT_REQUIRED.getDescription()
-            );
+            return CommonBusinessResponse.failure(BusinessExceptionCode.VERIFICATION_STEP_NOT_REQUIRED);
         }
         if (imageCaptchaStep.isCompleted()) {
-            throw new BasicRuntimeException(
-                    BusinessExceptionCode.VERIFICATION_STEP_ALREADY_VERIFIED.getCode(),
-                    BusinessExceptionCode.VERIFICATION_STEP_ALREADY_VERIFIED.getDescription()
-            );
+            return CommonBusinessResponse.failure(BusinessExceptionCode.VERIFICATION_STEP_ALREADY_VERIFIED);
         }
 
         CaptchaValidationParam captchaValidationParam = new CaptchaValidationParam();
@@ -113,10 +99,7 @@ public class ValidationMutationResolver {
         captchaValidationParam.setUserInput(request.getCode());
         CaptchaValidationResult captchaValidationResult = mathImageCaptchaBusinessService.validate(captchaValidationParam);
         if (!captchaValidationResult.isValid()) {
-            throw new BasicRuntimeException(
-                    BusinessExceptionCode.CAPTCHA_INVALID.getCode(),
-                    BusinessExceptionCode.CAPTCHA_INVALID.getDescription()
-            );
+            return CommonBusinessResponse.failure(BusinessExceptionCode.CAPTCHA_INVALID);
         }
 
         imageCaptchaStep.setCompleted(true);
