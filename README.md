@@ -5,7 +5,7 @@
 **下一代教育一体化管理平台 · 让教育管理更简单**
 
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1.1-brightgreen?logo=springboot)](https://spring.io/projects/spring-boot)
-[![Java](https://img.shields.io/badge/Java-17-orange?logo=java)](https://adoptium.net/)
+[![Java](https://img.shields.io/badge/Java-21-orange?logo=java)](https://adoptium.net/)
 [![Gradle](https://img.shields.io/badge/Gradle-9.5.1-blue?logo=gradle)](https://gradle.org/)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](#-贡献指南)
@@ -45,7 +45,7 @@ Model）与查询端（Query Model）的逻辑分离。这一架构选择兼顾�
 | 组件       | 选型                  |
 |----------|---------------------|
 | **基础框架** | Spring Boot         |
-| **语言**   | Java 17             |
+| **语言**   | Java 21             |
 | **构建工具** | Gradle (Groovy DSL) |
 | **数据库**  | MySQL               |
 

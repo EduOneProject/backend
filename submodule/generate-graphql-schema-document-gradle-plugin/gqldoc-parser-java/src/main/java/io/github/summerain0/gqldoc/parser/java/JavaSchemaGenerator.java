@@ -108,7 +108,7 @@ public class JavaSchemaGenerator {
 
         // 初始化Java解析器
         ParserConfiguration configuration = new ParserConfiguration();
-        configuration.setLanguageLevel(ParserConfiguration.LanguageLevel.JAVA_17);
+        configuration.setLanguageLevel(ParserConfiguration.LanguageLevel.JAVA_21);
         this.javaParser = new JavaParser(configuration);
 
         // 处理一下控制器
