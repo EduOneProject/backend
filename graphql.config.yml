@@ -1,0 +1,7 @@
+projects:
+  web-module-schema:
+    schema:
+      - ./eduone-web/src/main/resources/graphql/**/*.graphql
+    include:
+      - ./eduone-business-gateway/src/main/**/*.java
+      - ./eduone-query-gateway/src/main/**/*.java
