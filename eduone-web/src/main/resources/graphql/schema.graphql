@@ -143,9 +143,13 @@ input ImageCaptchaValidRequest {
     code: String
 }
 
+"""以密码登录请求体"""
 input LoginWithPasswordRequest {
+    """账号"""
     account: String
+    """密码"""
     password: String
+    """验证上下文token"""
     token: String
 }
 
