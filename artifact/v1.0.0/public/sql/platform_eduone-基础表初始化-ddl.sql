@@ -1,74 +1,35 @@
-CREATE TABLE `AssociationValueEntry`
+CREATE TABLE `aggregate_event_entry`
 (
-    `id`               int NOT NULL AUTO_INCREMENT,
-    `associationKey`   varchar(255) DEFAULT NULL,
-    `associationValue` varchar(255) DEFAULT NULL,
-    `sagaId`           varchar(255) DEFAULT NULL,
-    `sagaType`         varchar(255) DEFAULT NULL,
-    PRIMARY KEY (`id`) USING BTREE,
-    KEY `idx_association` (`associationKey`, `associationValue`) USING BTREE,
-    KEY `idx_saga_id` (`sagaId`) USING BTREE
-) ENGINE = InnoDB
-  ROW_FORMAT = DYNAMIC;
+    `global_index`              bigint       NOT NULL COMMENT '事件全局唯一序号',
+    `aggregate_identifier`      varchar(255) DEFAULT NULL COMMENT '聚合实例ID',
+    `aggregate_sequence_number` bigint       DEFAULT NULL COMMENT '事件在聚合内的序号',
+    `aggregate_type`            varchar(255) DEFAULT NULL COMMENT '聚合类型',
+    `identifier`                varchar(255) NOT NULL COMMENT '事件唯一ID',
+    `metadata`                  longtext COMMENT '事件元数据（JSON字符串）',
+    `payload`                   longtext     NOT NULL COMMENT '事件负载（JSON字符串）',
+    `timestamp`                 varchar(255) NOT NULL COMMENT '事件时间戳',
+    `type`                      varchar(255) NOT NULL COMMENT '负载类型（事件类名）',
+    `version`                   varchar(255) NOT NULL COMMENT '负载版本号',
+    PRIMARY KEY (`global_index`),
+    UNIQUE KEY `uk_aggregate_seq` (`aggregate_identifier`, `aggregate_sequence_number`)
+) ENGINE = InnoDB COMMENT ='聚合事件存储表';
 
-CREATE TABLE `DomainEventEntry`
+CREATE TABLE `aggregate-event-global-index-sequence`
 (
-    `globalIndex`         bigint       NOT NULL AUTO_INCREMENT,
-    `aggregateIdentifier` varchar(255) NOT NULL,
-    `sequenceNumber`      bigint       NOT NULL,
-    `type`                varchar(255) DEFAULT NULL,
-    `eventIdentifier`     varchar(255) NOT NULL,
-    `payload`             longtext,
-    `metaData`            longtext,
-    `payloadRevision`     varchar(255) DEFAULT NULL,
-    `payloadType`         varchar(255) NOT NULL,
-    `timeStamp`           varchar(255) NOT NULL,
-    PRIMARY KEY (`globalIndex`, `aggregateIdentifier`) USING BTREE,
-    UNIQUE KEY `aggregateIdentifier` (`aggregateIdentifier`, `sequenceNumber`) USING BTREE,
-    UNIQUE KEY `eventIdentifier` (`eventIdentifier`, `aggregateIdentifier`) USING BTREE
-) ENGINE = InnoDB
-  ROW_FORMAT = DYNAMIC;
+    `next_val` bigint DEFAULT NULL COMMENT '下一个可用的全局事件序号'
+) ENGINE = InnoDB COMMENT ='聚合事件全局序号生成表';
 
-CREATE TABLE `SagaEntry`
+CREATE TABLE `token_entry`
 (
-    `sagaId`          varchar(255) NOT NULL,
-    `revision`        varchar(255) DEFAULT NULL,
-    `sagaType`        varchar(255) DEFAULT NULL,
-    `serializedSaga`  longtext,
-    `eventIdentifier` varchar(255) DEFAULT NULL,
-    `metaData`        longtext,
-    PRIMARY KEY (`sagaId`) USING BTREE,
-    KEY `idx_eventIdentifier` (`eventIdentifier`) USING BTREE
-) ENGINE = InnoDB
-  ROW_FORMAT = DYNAMIC;
-
-CREATE TABLE `SnapshotEventEntry`
-(
-    `aggregateIdentifier` varchar(255) NOT NULL,
-    `sequenceNumber`      bigint       NOT NULL,
-    `type`                varchar(255) NOT NULL,
-    `eventIdentifier`     varchar(255) NOT NULL,
-    `payload`             longtext,
-    `metaData`            longtext,
-    `payloadRevision`     varchar(255) DEFAULT NULL,
-    `payloadType`         varchar(255) NOT NULL,
-    `timeStamp`           varchar(255) NOT NULL,
-    PRIMARY KEY (`aggregateIdentifier`, `sequenceNumber`) USING BTREE,
-    UNIQUE KEY `eventIdentifier` (`eventIdentifier`) USING BTREE
-) ENGINE = InnoDB
-  ROW_FORMAT = DYNAMIC;
-
-CREATE TABLE `TokenEntry`
-(
-    `processorName` varchar(255) NOT NULL,
-    `segment`       int          NOT NULL,
-    `token`         longtext,
-    `tokenType`     varchar(255) DEFAULT NULL,
-    `timestamp`     varchar(255) DEFAULT NULL,
-    `owner`         varchar(255) DEFAULT NULL,
-    PRIMARY KEY (`processorName`, `segment`) USING BTREE
-) ENGINE = InnoDB
-  ROW_FORMAT = DYNAMIC;
+    `processor_name` varchar(255) NOT NULL COMMENT '事件处理器名称',
+    `segment`        int          NOT NULL COMMENT '处理器分段号',
+    `mask`           int          NOT NULL COMMENT '分段掩码',
+    `owner`          varchar(255) DEFAULT NULL COMMENT '当前持有该分段的节点标识',
+    `timestamp`      varchar(255) NOT NULL COMMENT '令牌最后更新时间',
+    `token`          blob COMMENT '处理进度令牌（序列化数据）',
+    `token_type`     varchar(255) DEFAULT NULL COMMENT '令牌类型',
+    PRIMARY KEY (`processor_name`, `segment`)
+) ENGINE = InnoDB COMMENT ='事件处理器进度跟踪表';
 
 CREATE TABLE `dd_region_tree`
 (
