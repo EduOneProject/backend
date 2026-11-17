@@ -71,7 +71,7 @@ public class AccountAuthenticator {
             throw new BasicRuntimeException(BusinessExceptionCode.ACCOUNT_INACTIVE.getCode(), BusinessExceptionCode.ACCOUNT_INACTIVE.getDescription());
         }
 
-        UserPrincipal principal = UserPrincipal.of(accountInfoView.getUserId());
+        UserPrincipal principal = UserPrincipal.of(accountInfoView.getUserId(), accountInfoView.getId());
         return new PrincipalAuthenticationToken(principal, Collections.emptyList());
     }
 }

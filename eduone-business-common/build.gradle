@@ -5,4 +5,6 @@ dependencies {
     implementation(libs.springBoot)
     implementation(libs.springDataRedis)
     implementation(libs.commonsCollections4)
+    implementation(libs.yauaa)
+    implementation(libs.commonsLang3)
 }

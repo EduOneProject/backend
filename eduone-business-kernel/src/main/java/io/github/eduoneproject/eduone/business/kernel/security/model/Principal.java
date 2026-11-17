@@ -14,6 +14,11 @@ public interface Principal {
     PrincipalId getId();
 
     /**
+     * 获取账号唯一标识
+     */
+    PrincipalId getAccountId();
+
+    /**
      * 获取身份类型
      */
     PrincipalType getType();

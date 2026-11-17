@@ -29,4 +29,9 @@ public class LoginWithPasswordParam implements Serializable {
      * 登录令牌
      */
     private String token;
+
+    /**
+     * 用户代理标识
+     */
+    private String userAgent;
 }

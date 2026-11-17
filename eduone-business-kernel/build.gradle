@@ -18,6 +18,8 @@ dependencies {
     implementation(libs.kaptcha) {
         exclude(group: "javax.servlet", module: "javax.servlet-api")
     }
+    implementation(libs.axonSpringBootStarter)
+    implementation(libs.ip4j)
 
     compileOnly(libs.jakartaServletApi)
     runtimeOnly(libs.jjwtImpl)

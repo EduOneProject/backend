@@ -22,6 +22,7 @@ dependencies {
     implementation(libs.mybatisPlusJsqlparser)
     implementation(libs.graphqlJavaExtendedScalars)
     implementation(libs.slf4jApi)
+    implementation(libs.springBootStarterDataJpa)
 
     runtimeOnly(libs.mysqlConnectorJ)
     testImplementation(project(":eduone-business-common"))
