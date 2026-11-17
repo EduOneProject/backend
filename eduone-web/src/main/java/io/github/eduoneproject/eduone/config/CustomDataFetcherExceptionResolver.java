@@ -3,9 +3,9 @@ package io.github.eduoneproject.eduone.config;
 import graphql.GraphQLError;
 import graphql.GraphqlErrorBuilder;
 import graphql.schema.DataFetchingEnvironment;
-import io.github.eduoneproject.eduone.consts.ApplicationErrorType;
 import io.github.eduoneproject.eduone.common.consts.CommonExceptionCode;
 import io.github.eduoneproject.eduone.common.exception.BasicRuntimeException;
+import io.github.eduoneproject.eduone.consts.ApplicationErrorType;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +39,7 @@ public class CustomDataFetcherExceptionResolver implements DataFetcherExceptionR
                     .location(environment.getField().getSourceLocation())
                     .extensions(buildExtensions(exception))
                     .build();
+            log.warn("参数发生异常", exception);
             return Mono.just(Collections.singletonList(error));
         } else if (exception instanceof ConstraintViolationException constraintViolationException) { // 参数异常
             Set<ConstraintViolation<?>> violations = constraintViolationException.getConstraintViolations();
@@ -49,6 +50,7 @@ public class CustomDataFetcherExceptionResolver implements DataFetcherExceptionR
                     .location(environment.getField().getSourceLocation())
                     .extensions(buildExtensions(exception))
                     .build();
+            log.warn("参数发生异常", exception);
             return Mono.just(Collections.singletonList(error));
         } else if (exception instanceof BasicRuntimeException basicRuntimeException) { // 业务异常
             ApplicationErrorType applicationErrorType = getBusinessErrorType(basicRuntimeException);
@@ -64,6 +66,7 @@ public class CustomDataFetcherExceptionResolver implements DataFetcherExceptionR
                     .location(environment.getField().getSourceLocation())
                     .extensions(buildExtensions(exception))
                     .build();
+            log.warn("业务发生异常", exception);
             return Mono.just(Collections.singletonList(error));
         }
         log.error("系统发生异常", exception);
@@ -75,6 +78,7 @@ public class CustomDataFetcherExceptionResolver implements DataFetcherExceptionR
                 .location(environment.getField().getSourceLocation())
                 .extensions(buildExtensions(exception))
                 .build();
+        log.error("系统发生异常", exception);
         return Mono.just(Collections.singletonList(error));
     }
 
