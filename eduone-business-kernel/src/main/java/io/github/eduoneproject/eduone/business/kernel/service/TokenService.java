@@ -70,4 +70,11 @@ public interface TokenService {
      * @return 轮换结果
      */
     RotateAccessTokenResult rotateAccessToken(String refreshToken);
+
+    /**
+     * 撤销会话
+     *
+     * @param sessionId 会话ID
+     */
+    void revokeSession(String sessionId);
 }

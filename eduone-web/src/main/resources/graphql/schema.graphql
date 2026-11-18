@@ -2,6 +2,7 @@ type Query
 type Mutation
 directive @page(for: String!) on FIELD_DEFINITION
 directive @commonBusinessResponse(for: String!) on FIELD_DEFINITION
+scalar Boolean
 scalar DateTime
 scalar Int
 scalar Long

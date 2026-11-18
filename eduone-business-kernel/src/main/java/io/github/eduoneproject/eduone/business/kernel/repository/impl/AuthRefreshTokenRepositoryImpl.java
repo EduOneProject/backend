@@ -87,6 +87,24 @@ public interface AuthRefreshTokenRepositoryImpl extends AuthRefreshTokenReposito
         return map(po);
     }
 
+    @Override
+    default int updateRevokedForUnusedTokenBySessionId(String sessionId, Boolean revoked, OffsetDateTime revokedTime){
+        if (StringUtils.isBlank(sessionId)) {
+            return 0;
+        }
+        if (revoked == null) {
+            throw new IllegalArgumentException("revoked cannot be null");
+        }
+        LambdaUpdateWrapper<AuthRefreshTokenPO> updateWrapper = new LambdaUpdateWrapper<>();
+        updateWrapper.eq(AuthRefreshTokenPO::getSessionId, sessionId);
+        updateWrapper.eq(AuthRefreshTokenPO::getUsed, false);
+        updateWrapper.set(AuthRefreshTokenPO::getRevoked, revoked);
+        if (revokedTime != null) {
+            updateWrapper.set(AuthRefreshTokenPO::getRevokedTime, revokedTime);
+        }
+        return update(updateWrapper);
+    }
+
     private AuthRefreshTokenPO map(UpsertAuthRefreshTokenParam param) {
         if (param == null) {
             return null;

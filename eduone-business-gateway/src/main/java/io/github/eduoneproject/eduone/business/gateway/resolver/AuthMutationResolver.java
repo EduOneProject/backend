@@ -6,11 +6,16 @@ import io.github.eduoneproject.eduone.business.kernel.service.TokenService;
 import io.github.eduoneproject.eduone.business.kernel.service.model.RotateAccessTokenResult;
 import io.github.eduoneproject.eduone.common.annotation.OptionalLogin;
 import io.github.eduoneproject.eduone.common.consts.CommonExceptionCode;
+import io.github.eduoneproject.eduone.common.domain.context.ServiceContext;
+import io.github.eduoneproject.eduone.common.domain.context.ServiceContextLocal;
+import io.github.eduoneproject.eduone.common.domain.context.UserIdentity;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.stereotype.Controller;
+
+import java.util.Optional;
 
 /**
  * 用户登录接口
@@ -47,5 +52,23 @@ public class AuthMutationResolver {
         } else { // 其他情况
             return CommonBusinessResponse.failure(CommonExceptionCode.UNAUTHORIZED, null);
         }
+    }
+
+    /**
+     * 登出
+     *
+     * @return 是否登出成功
+     */
+    @MutationMapping
+    public CommonBusinessResponse<Boolean> logout() {
+        String sessionId = Optional.ofNullable(ServiceContextLocal.getServiceContext())
+                .map(ServiceContext::getUserIdentity)
+                .map(UserIdentity::getSessionId)
+                .orElse(null);
+        if (StringUtils.isBlank(sessionId)) {
+            return CommonBusinessResponse.success(false);
+        }
+        tokenService.revokeSession(sessionId);
+        return CommonBusinessResponse.success(true);
     }
 }

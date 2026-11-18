@@ -55,4 +55,14 @@ public interface AuthRefreshTokenRepository {
      * @return 刷新令牌信息
      */
     AuthRefreshTokenModel getRecordByTokenHash(String tokenHash);
+
+    /**
+     * 根据会话ID更新刷新令牌吊销信息
+     *
+     * @param sessionId   会话ID
+     * @param revoked     是否已被吊销
+     * @param revokedTime 吊销的时间
+     * @return 受影响的行数
+     */
+    int updateRevokedForUnusedTokenBySessionId(String sessionId, Boolean revoked, OffsetDateTime revokedTime);
 }

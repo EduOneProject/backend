@@ -1,4 +1,6 @@
 extend type Mutation {
+    """登出"""
+    logout: BooleanBusinessResponse @commonBusinessResponse(for: "Boolean")
     """轮换访问令牌"""
     rotateAccessToken(refreshToken: String): RotateAccessTokenResponseBusinessResponse @commonBusinessResponse(for: "RotateAccessTokenResponse")
 }

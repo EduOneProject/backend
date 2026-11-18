@@ -302,6 +302,14 @@ public class TokenServiceImpl implements TokenService {
         return RotateAccessTokenResult.success(userTokenResult.getRefreshToken(), userTokenResult.getAccessToken());
     }
 
+    @Override
+    public void revokeSession(String sessionId) {
+        if (StringUtils.isBlank(sessionId)) {
+            return;
+        }
+        authRefreshTokenRepository.updateRevokedForUnusedTokenBySessionId(sessionId, true, OffsetDateTime.now());
+    }
+
     /**
      * 轮换用户令牌的持有者
      */
