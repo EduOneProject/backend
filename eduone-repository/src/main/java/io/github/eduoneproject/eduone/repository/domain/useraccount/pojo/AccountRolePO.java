@@ -25,99 +25,54 @@ public class AccountRolePO implements Serializable {
     /**
      * 主键
      */
-    public static final String COLUMN_ID = "id";
-
-    /**
-     * 账号ID
-     */
-    public static final String COLUMN_ACCOUNT_ID = "account_id";
-
-    /**
-     * 角色ID
-     */
-    public static final String COLUMN_ROLE_ID = "role_id";
-
-    /**
-     * 授权人
-     */
-    public static final String COLUMN_GRANT_BY = "grant_by";
-
-    /**
-     * 授权时间
-     */
-    public static final String COLUMN_GRANT_TIME = "grant_time";
-
-    /**
-     * 授权过期时间
-     */
-    public static final String COLUMN_EXPIRE_TIME = "expire_time";
-
-    /**
-     * 状态
-     */
-    public static final String COLUMN_STATUS = "status";
-
-    /**
-     * 创建时间
-     */
-    public static final String COLUMN_CREATE_TIME = "create_time";
-
-    /**
-     * 更新时间
-     */
-    public static final String COLUMN_UPDATE_TIME = "update_time";
-
-    /**
-     * 主键
-     */
-    @TableId(COLUMN_ID)
+    @TableId("id")
     private String id;
 
     /**
      * 账号ID
      */
-    @TableField(COLUMN_ACCOUNT_ID)
+    @TableField("account_id")
     private String accountId;
 
     /**
      * 角色ID
      */
-    @TableField(COLUMN_ROLE_ID)
+    @TableField("role_id")
     private String roleId;
 
     /**
      * 授权人
      */
-    @TableField(COLUMN_GRANT_BY)
+    @TableField("grant_by")
     private String grantBy;
 
     /**
      * 授权时间
      */
-    @TableField(COLUMN_GRANT_TIME)
+    @TableField("grant_time")
     private OffsetDateTime grantTime;
 
     /**
      * 授权过期时间
      */
-    @TableField(COLUMN_EXPIRE_TIME)
+    @TableField("expire_time")
     private OffsetDateTime expireTime;
 
     /**
      * 状态
      */
-    @TableField(COLUMN_STATUS)
+    @TableField("status")
     private String status;
 
     /**
      * 创建时间
      */
-    @TableField(COLUMN_CREATE_TIME)
+    @TableField("create_time")
     private OffsetDateTime createTime;
 
     /**
      * 更新时间
      */
-    @TableField(COLUMN_UPDATE_TIME)
+    @TableField("update_time")
     private OffsetDateTime updateTime;
 }

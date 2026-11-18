@@ -26,144 +26,79 @@ public class RolePO implements Serializable {
     /**
      * 角色ID
      */
-    public static final String COLUMN_ID = "id";
-
-    /**
-     * 角色编码
-     */
-    public static final String COLUMN_ROLE_CODE = "role_code";
-
-    /**
-     * 角色名称
-     */
-    public static final String COLUMN_ROLE_NAME = "role_name";
-
-    /**
-     * 角色类型
-     */
-    public static final String COLUMN_ROLE_TYPE = "role_type";
-
-    /**
-     * 数据范围
-     */
-    public static final String COLUMN_DATA_SCOPE = "data_scope";
-
-    /**
-     * 排序
-     */
-    public static final String COLUMN_SORT = "sort";
-
-    /**
-     * 状态
-     */
-    public static final String COLUMN_STATUS = "status";
-
-    /**
-     * 描述
-     */
-    public static final String COLUMN_DESCRIPTION = "description";
-
-    /**
-     * 创建人
-     */
-    public static final String COLUMN_CREATE_USER_ID = "create_user_id";
-
-    /**
-     * 创建时间
-     */
-    public static final String COLUMN_CREATE_TIME = "create_time";
-
-    /**
-     * 更新人
-     */
-    public static final String COLUMN_UPDATE_USER_ID = "update_user_id";
-
-    /**
-     * 更新时间
-     */
-    public static final String COLUMN_UPDATE_TIME = "update_time";
-
-    /**
-     * 逻辑删除标识
-     */
-    public static final String COLUMN_IS_DELETED = "is_deleted";
-
-    /**
-     * 角色ID
-     */
-    @TableId(COLUMN_ID)
+    @TableId("id")
     private String id;
 
     /**
      * 角色编码
      */
-    @TableField(COLUMN_ROLE_CODE)
+    @TableField("role_code")
     private String roleCode;
 
     /**
      * 角色名称
      */
-    @TableField(COLUMN_ROLE_NAME)
+    @TableField("role_name")
     private String roleName;
 
     /**
      * 角色类型
      */
-    @TableField(COLUMN_ROLE_TYPE)
+    @TableField("role_type")
     private String roleType;
 
     /**
      * 数据范围
      */
-    @TableField(COLUMN_DATA_SCOPE)
+    @TableField("data_scope")
     private String dataScope;
 
     /**
      * 排序
      */
-    @TableField(COLUMN_SORT)
+    @TableField("sort")
     private Integer sort;
 
     /**
      * 状态
      */
-    @TableField(COLUMN_STATUS)
+    @TableField("status")
     private String status;
 
     /**
      * 描述
      */
-    @TableField(COLUMN_DESCRIPTION)
+    @TableField("description")
     private String description;
 
     /**
      * 创建人
      */
-    @TableField(COLUMN_CREATE_USER_ID)
+    @TableField("create_user_id")
     private String createUserId;
 
     /**
      * 创建时间
      */
-    @TableField(COLUMN_CREATE_TIME)
+    @TableField("create_time")
     private OffsetDateTime createTime;
 
     /**
      * 更新人
      */
-    @TableField(COLUMN_UPDATE_USER_ID)
+    @TableField("update_user_id")
     private String updateUserId;
 
     /**
      * 更新时间
      */
-    @TableField(COLUMN_UPDATE_TIME)
+    @TableField("update_time")
     private OffsetDateTime updateTime;
 
     /**
      * 逻辑删除标识
      */
     @TableLogic
-    @TableField(COLUMN_IS_DELETED)
-    private Integer deleted;
+    @TableField("is_deleted")
+    private Boolean deleted;
 }
