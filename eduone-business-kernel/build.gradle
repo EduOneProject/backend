@@ -20,6 +20,9 @@ dependencies {
     }
     implementation(libs.axonSpringBootStarter)
     implementation(libs.ip4j)
+    implementation(platform(libs.mybatisPlusBom))
+    implementation(libs.mybatisPlusCore)
+    implementation(libs.springTx)
 
     compileOnly(libs.jakartaServletApi)
     runtimeOnly(libs.jjwtImpl)

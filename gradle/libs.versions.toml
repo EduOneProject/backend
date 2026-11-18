@@ -18,6 +18,7 @@ lombok = { module = "org.projectlombok:lombok" }
 slf4jApi = { module = "org.slf4j:slf4j-api" }
 jakartaServletApi = { module = "jakarta.servlet:jakarta.servlet-api" }
 springContext = { module = "org.springframework:spring-context" }
+springTx = { module = "org.springframework:spring-tx" }
 springBoot = { module = "org.springframework.boot:spring-boot" }
 springBootStarterWeb = { module = "org.springframework.boot:spring-boot-starter-web" }
 springBootStarterAspectj = { module = "org.springframework.boot:spring-boot-starter-aspectj" }

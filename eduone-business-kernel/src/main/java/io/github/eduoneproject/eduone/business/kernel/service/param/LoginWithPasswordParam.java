@@ -34,4 +34,14 @@ public class LoginWithPasswordParam implements Serializable {
      * 用户代理标识
      */
     private String userAgent;
+
+    /**
+     * 设备ID
+     */
+    private String deviceId;
+
+    /**
+     * ip地址
+     */
+    private String ipAddress;
 }

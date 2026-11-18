@@ -11,6 +11,7 @@ import io.github.eduoneproject.eduone.business.kernel.service.param.CaptchaValid
 import io.github.eduoneproject.eduone.business.kernel.service.param.MathImageCaptchaGenerationParam;
 import io.github.eduoneproject.eduone.common.consts.CommonExceptionCode;
 import io.github.eduoneproject.eduone.common.exception.BasicRuntimeException;
+import io.github.eduoneproject.eduone.common.util.IdUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -24,7 +25,6 @@ import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.Base64;
 import java.util.Objects;
-import java.util.UUID;
 
 /**
  * 四则运算图形验证码业务接口实现
@@ -70,7 +70,7 @@ public class MathImageCaptchaBusinessService implements CaptchaBusinessService<S
             ImageIO.write(bufferedImage, "jpg", out);
             String imageBase64 = Base64.getEncoder().encodeToString(out.toByteArray());
             // 缓存结果
-            String uniqueId = UUID.randomUUID().toString();
+            String uniqueId = IdUtils.uuid();
             OffsetDateTime offsetDateTime = OffsetDateTime.now();
             Duration duration = expirationConfig.getImageCaptcha();
             redisCache.setCacheObject(getRedisKey(uniqueId), answer, duration);

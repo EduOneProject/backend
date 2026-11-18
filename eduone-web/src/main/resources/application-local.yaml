@@ -23,6 +23,7 @@ expiration:
   image-captcha: 5m
   access-token: 15m
   refresh-token: 30d
+  refresh-token-rotate-grace-window: 30s
 
 # 前端应用相关配置
 frontend-application:

@@ -12,6 +12,7 @@ import io.github.eduoneproject.eduone.business.kernel.service.param.CreateUserTo
 import io.github.eduoneproject.eduone.business.kernel.service.param.LoginWithPasswordParam;
 import io.github.eduoneproject.eduone.common.consts.CommonExceptionCode;
 import io.github.eduoneproject.eduone.common.exception.BasicRuntimeException;
+import io.github.eduoneproject.eduone.common.util.IdUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -20,7 +21,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
-import java.util.UUID;
 
 /**
  * 认证业务类实现
@@ -49,7 +49,7 @@ public class AuthAppServiceImpl implements AuthAppService {
         }
 
         OffsetDateTime activeTime = OffsetDateTime.now();
-        String sessionId = UUID.randomUUID().toString();
+        String sessionId = IdUtils.uuid();
         String userId = principal.getId().id();
         String accountId = principal.getAccountId().id();
 
@@ -59,7 +59,10 @@ public class AuthAppServiceImpl implements AuthAppService {
         createUserTokenParam.setUserId(userId);
         createUserTokenParam.setAccountId(accountId);
         createUserTokenParam.setIssuedAt(OffsetDateTime.now());
-        createUserTokenParam.setExpirationTime(OffsetDateTime.now().plusSeconds(expirationConfig.getAccessToken().getSeconds()));
+        createUserTokenParam.setUserAgent(param.getUserAgent());
+        createUserTokenParam.setIpAddress(param.getIpAddress());
+        createUserTokenParam.setAccessTokenExpirationTime(OffsetDateTime.now().plusSeconds(expirationConfig.getAccessToken().getSeconds()));
+        createUserTokenParam.setRefreshTokenExpirationTime(OffsetDateTime.now().plusSeconds(expirationConfig.getRefreshToken().getSeconds()));
         UserTokenResult userTokenResult = tokenService.generateUserToken(createUserTokenParam);
         String accessToken = userTokenResult.getAccessToken();
         String refreshToken = userTokenResult.getRefreshToken();

@@ -40,4 +40,28 @@ public class CreateAccessTokenParam implements Serializable {
      * 过期时间
      */
     private OffsetDateTime expirationTime;
+
+    /**
+     * 验证参数
+     */
+    public void validate() {
+        if (sessionId == null) {
+            throw new IllegalArgumentException("会话ID不能为空");
+        }
+        if (userId == null) {
+            throw new IllegalArgumentException("用户ID不能为空");
+        }
+        if (accountId == null) {
+            throw new IllegalArgumentException("账户ID不能为空");
+        }
+        if (issuedAt == null) {
+            throw new IllegalArgumentException("签发时间不能为空");
+        }
+        if (expirationTime == null) {
+            throw new IllegalArgumentException("过期时间不能为空");
+        }
+        if (expirationTime.isBefore(issuedAt)) {
+            throw new IllegalArgumentException("过期时间不能早于签发时间");
+        }
+    }
 }

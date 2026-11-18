@@ -188,8 +188,10 @@ CREATE TABLE `bds_account_auth`
 
 CREATE TABLE `bds_auth_refresh_tokens`
 (
-    `id`           varchar(36) NOT NULL COMMENT '主键',
+    `id`           varchar(32) NOT NULL COMMENT '主键',
     `token_hash`   varchar(64)  DEFAULT NULL COMMENT 'RefreshToken的SHA-256哈希',
+    `session_id`   varchar(36)  DEFAULT NULL COMMENT '所属会话ID',
+    `account_id`   varchar(32)  DEFAULT NULL COMMENT '所属账号ID',
     `user_id`      varchar(32)  DEFAULT NULL COMMENT '所属用户 ID',
     `expires_time` datetime(3)  DEFAULT NULL COMMENT '过期时间',
     `used`         tinyint      DEFAULT '0' COMMENT '是否已被轮换使用',
@@ -197,12 +199,12 @@ CREATE TABLE `bds_auth_refresh_tokens`
     `created_time` datetime(3)  DEFAULT NULL COMMENT '创建时间',
     `revoked`      tinyint      DEFAULT NULL COMMENT '是否已撤销',
     `revoked_time` datetime(3)  DEFAULT NULL COMMENT '撤销时间',
-    `replaced_by`  varchar(36)  DEFAULT NULL COMMENT '轮换后的新Token ID，用于追踪Token家族',
+    `replaced_by`  varchar(32)  DEFAULT NULL COMMENT '轮换后的新Token ID，用于追踪Token家族',
     `device_id`    varchar(128) DEFAULT NULL COMMENT '设备标识',
     `user_agent`   varchar(512) DEFAULT NULL COMMENT '客户端 UA',
     `ip_address`   varchar(45)  DEFAULT NULL COMMENT '客户端 IP',
-    PRIMARY KEY (`id`),
-    UNIQUE KEY `idx_unique_token_hash` (`token_hash`),
-    KEY `idx_user_id` (`user_id`),
-    KEY `idx_token_hash` (`token_hash`)
-) ENGINE = InnoDB COMMENT ='认证刷新令牌记录表';
+    PRIMARY KEY (`id`) USING BTREE,
+    UNIQUE KEY `idx_unique_token_hash` (`token_hash`) USING BTREE,
+    KEY `idx_user_id` (`user_id`) USING BTREE,
+    KEY `idx_token_hash` (`token_hash`) USING BTREE
+) ENGINE = InnoDB COMMENT ='刷新令牌记录表';

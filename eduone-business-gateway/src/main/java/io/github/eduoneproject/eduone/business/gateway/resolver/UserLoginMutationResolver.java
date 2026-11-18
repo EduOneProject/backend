@@ -36,15 +36,15 @@ public class UserLoginMutationResolver {
     @OptionalLogin
     @MutationMapping
     public CommonBusinessResponse<UserLoginSuccessResponse> loginWithPassword(@Argument LoginWithPasswordRequest request) {
-        String userAgent = Optional.ofNullable(ServiceContextLocal.getServiceContext())
+        HttpIdentity httpIdentity = Optional.ofNullable(ServiceContextLocal.getServiceContext())
                 .map(ServiceContext::getHttpIdentity)
-                .map(HttpIdentity::getUserAgent)
-                .orElse(null);
+                .orElse(HttpIdentity.builder().build());
 
         LoginWithPasswordParam param = new LoginWithPasswordParam();
         param.setAccount(request.getAccount());
         param.setPassword(request.getPassword());
-        param.setUserAgent(userAgent);
+        param.setIpAddress(httpIdentity.getIpAddress());
+        param.setUserAgent(httpIdentity.getUserAgent());
         LoginSuccessResult loginSuccessResult = authAppService.loginWithPassword(param);
         UserLoginSuccessResponse response = new UserLoginSuccessResponse();
         response.setUserId(loginSuccessResult.getUserId());

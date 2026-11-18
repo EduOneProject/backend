@@ -29,4 +29,9 @@ public class ExpirationConfig {
      * 刷新令牌过期时间
      */
     private Duration refreshToken;
+
+    /**
+     * 刷新令牌轮换宽限期
+     */
+    private Duration refreshTokenRotateGraceWindow;
 }

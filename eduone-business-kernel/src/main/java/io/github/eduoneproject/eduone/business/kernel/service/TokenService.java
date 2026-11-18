@@ -1,6 +1,7 @@
 package io.github.eduoneproject.eduone.business.kernel.service;
 
 import io.github.eduoneproject.eduone.business.kernel.service.model.AccessTokenJwtPayload;
+import io.github.eduoneproject.eduone.business.kernel.service.model.RotateAccessTokenResult;
 import io.github.eduoneproject.eduone.business.kernel.service.model.UserTokenResult;
 import io.github.eduoneproject.eduone.business.kernel.service.param.CreateAccessTokenParam;
 import io.github.eduoneproject.eduone.business.kernel.service.param.CreateRefreshTokenParam;
@@ -38,6 +39,15 @@ public interface TokenService {
     String createRefreshToken(CreateRefreshTokenParam param);
 
     /**
+     * 创建刷新令牌，可以指定刷新令牌的值
+     *
+     * @param refreshToken 刷新令牌
+     * @param param        创建参数
+     * @return 刷新令牌
+     */
+    String createRefreshToken(String refreshToken, CreateRefreshTokenParam param);
+
+    /**
      * 解析访问令牌
      *
      * @param accessToken 访问令牌
@@ -52,4 +62,12 @@ public interface TokenService {
      * @return 令牌信息
      */
     AccessTokenJwtPayload extractToken(HttpServletRequest request);
+
+    /**
+     * 轮换访问令牌
+     *
+     * @param refreshToken 刷新令牌
+     * @return 轮换结果
+     */
+    RotateAccessTokenResult rotateAccessToken(String refreshToken);
 }
