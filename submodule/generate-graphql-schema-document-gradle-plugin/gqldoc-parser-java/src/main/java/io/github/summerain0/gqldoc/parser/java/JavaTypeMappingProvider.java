@@ -35,6 +35,8 @@ public class JavaTypeMappingProvider implements TypeMappingProvider {
                 TypeMappingRule.simpleRule("java.time.OffsetDateTime", "DateTime", TypeKind.SCALAR, GLOBAL_PRIORITY),
                 TypeMappingRule.simpleRule("java.util.Date", "DateTime", TypeKind.SCALAR, GLOBAL_PRIORITY),
                 TypeMappingRule.simpleRule("java.lang.String", "String", TypeKind.SCALAR, GLOBAL_PRIORITY),
+                TypeMappingRule.simpleRule("java.lang.Boolean", "Boolean", TypeKind.SCALAR, GLOBAL_PRIORITY),
+                TypeMappingRule.simpleRule("boolean", "Boolean", TypeKind.SCALAR, GLOBAL_PRIORITY),
                 new TypeMappingRule(
                         "java.util.Collection",
                         GLOBAL_PRIORITY,
