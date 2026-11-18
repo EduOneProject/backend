@@ -6,6 +6,7 @@ import io.github.eduoneproject.eduone.business.kernel.repository.model.AuthRefre
 import io.github.eduoneproject.eduone.business.kernel.repository.param.UpsertAuthRefreshTokenParam;
 import io.github.eduoneproject.eduone.business.kernel.service.TokenService;
 import io.github.eduoneproject.eduone.business.kernel.service.model.AccessTokenJwtPayload;
+import io.github.eduoneproject.eduone.business.kernel.service.model.RefreshToken;
 import io.github.eduoneproject.eduone.business.kernel.service.model.RotateAccessTokenResult;
 import io.github.eduoneproject.eduone.business.kernel.service.model.UserTokenResult;
 import io.github.eduoneproject.eduone.business.kernel.service.param.CreateAccessTokenParam;
@@ -21,7 +22,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -103,12 +103,12 @@ public class TokenServiceImpl implements TokenService {
     public String createRefreshToken(CreateRefreshTokenParam param) {
         param.validate();
 
-        String refreshToken = UUID.randomUUID().toString();
-        String hash = DigestUtils.sha256Hex(refreshToken);
+        String refreshTokenRaw = UUID.randomUUID().toString();
+        RefreshToken refreshToken = RefreshToken.of(refreshTokenRaw);
 
         UpsertAuthRefreshTokenParam upsertAuthRefreshTokenParam = new UpsertAuthRefreshTokenParam();
         upsertAuthRefreshTokenParam.setId(IdUtils.simpleUuid());
-        upsertAuthRefreshTokenParam.setTokenHash(hash);
+        upsertAuthRefreshTokenParam.setTokenHash(refreshToken.getHash());
         upsertAuthRefreshTokenParam.setSessionId(param.getSessionId());
         upsertAuthRefreshTokenParam.setAccountId(param.getAccountId());
         upsertAuthRefreshTokenParam.setUserId(param.getUserId());
@@ -120,20 +120,20 @@ public class TokenServiceImpl implements TokenService {
         upsertAuthRefreshTokenParam.setUserAgent(param.getUserAgent());
         upsertAuthRefreshTokenParam.setIpAddress(param.getIpAddress());
         authRefreshTokenRepository.saveRecord(upsertAuthRefreshTokenParam);
-        return refreshToken;
+        return refreshTokenRaw;
     }
 
     @Override
-    public String createRefreshToken(String refreshToken, CreateRefreshTokenParam param) {
-        if (StringUtils.isBlank(refreshToken)) {
+    public String createRefreshToken(String refreshTokenRaw, CreateRefreshTokenParam param) {
+        if (StringUtils.isBlank(refreshTokenRaw)) {
             throw new BasicRuntimeException("刷新令牌不能为空");
         }
         param.validate();
-        String hash = DigestUtils.sha256Hex(refreshToken);
+        RefreshToken refreshToken = RefreshToken.of(refreshTokenRaw);
 
         UpsertAuthRefreshTokenParam upsertAuthRefreshTokenParam = new UpsertAuthRefreshTokenParam();
         upsertAuthRefreshTokenParam.setId(IdUtils.simpleUuid());
-        upsertAuthRefreshTokenParam.setTokenHash(hash);
+        upsertAuthRefreshTokenParam.setTokenHash(refreshToken.getHash());
         upsertAuthRefreshTokenParam.setSessionId(param.getSessionId());
         upsertAuthRefreshTokenParam.setAccountId(param.getAccountId());
         upsertAuthRefreshTokenParam.setUserId(param.getUserId());
@@ -145,7 +145,7 @@ public class TokenServiceImpl implements TokenService {
         upsertAuthRefreshTokenParam.setUserAgent(param.getUserAgent());
         upsertAuthRefreshTokenParam.setIpAddress(param.getIpAddress());
         authRefreshTokenRepository.saveRecord(upsertAuthRefreshTokenParam);
-        return refreshToken;
+        return refreshTokenRaw;
     }
 
     @Override
@@ -183,12 +183,13 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public RotateAccessTokenResult rotateAccessToken(String refreshToken) {
+    public RotateAccessTokenResult rotateAccessToken(String refreshTokenRaw) {
         // 基本校验
-        if (StringUtils.isBlank(refreshToken)) {
+        if (StringUtils.isBlank(refreshTokenRaw)) {
             return RotateAccessTokenResult.failure(RotateAccessTokenResult.ResultCode.TOKEN_NOT_FOUND);
         }
-        String tokenHash = DigestUtils.sha256Hex(refreshToken);
+        RefreshToken refreshToken = RefreshToken.of(refreshTokenRaw);
+        String tokenHash = refreshToken.getHash();
         OffsetDateTime currentTime = OffsetDateTime.now();
         AuthRefreshTokenModel authRefreshTokenModel = authRefreshTokenRepository.getRecordByTokenHash(tokenHash);
         if (authRefreshTokenModel == null) { // 刷新令牌不存在
@@ -214,14 +215,15 @@ public class TokenServiceImpl implements TokenService {
 
         // 生成新的一套访问令牌和刷新令牌
         RotateUserTokenHolder userTokenResultHolder = transactionHelper.executeWithResult(() -> {
-            String newRefreshToken = IdUtils.uuid();
+            String newRefreshTokenRaw = IdUtils.uuid();
+            RefreshToken newRefreshToken = RefreshToken.of(newRefreshTokenRaw);
 
             // 标记旧的令牌
             int affectedRow = authRefreshTokenRepository.updateUsedByTokenHashIfUnused(
                     tokenHash,
                     true,
                     currentTime,
-                    DigestUtils.sha256Hex(newRefreshToken)
+                    newRefreshToken.getHash()
             );
 
             RotateUserTokenHolder holder = new RotateUserTokenHolder();
@@ -237,7 +239,7 @@ public class TokenServiceImpl implements TokenService {
             createAccessTokenParam.setAccountId(authRefreshTokenModel.getAccountId());
             createAccessTokenParam.setIssuedAt(currentTime);
             createAccessTokenParam.setExpirationTime(currentTime.plus(expirationConfig.getAccessToken()));
-            String newAccessToken = createAccessToken(createAccessTokenParam);
+            String newAccessTokenRaw = createAccessToken(createAccessTokenParam);
 
             // 创建新的刷新令牌
             CreateRefreshTokenParam createRefreshTokenParam = new CreateRefreshTokenParam();
@@ -249,12 +251,12 @@ public class TokenServiceImpl implements TokenService {
             createRefreshTokenParam.setIpAddress(authRefreshTokenModel.getIpAddress());
             createRefreshTokenParam.setIssuedAt(currentTime);
             createRefreshTokenParam.setExpirationTime(currentTime.plus(expirationConfig.getRefreshToken()));
-            newRefreshToken = createRefreshToken(newRefreshToken, createRefreshTokenParam);
+            newRefreshTokenRaw = createRefreshToken(newRefreshTokenRaw, createRefreshTokenParam);
 
             // 组装结果
             UserTokenResult userTokenResult = new UserTokenResult();
-            userTokenResult.setAccessToken(newAccessToken);
-            userTokenResult.setRefreshToken(newRefreshToken);
+            userTokenResult.setAccessToken(newAccessTokenRaw);
+            userTokenResult.setRefreshToken(newRefreshTokenRaw);
             holder.setUserTokenResult(userTokenResult);
             return holder;
         });
