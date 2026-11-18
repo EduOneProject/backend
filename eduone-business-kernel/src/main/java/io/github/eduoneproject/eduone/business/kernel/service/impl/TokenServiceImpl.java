@@ -208,6 +208,11 @@ public class TokenServiceImpl implements TokenService {
             Duration refreshTokenRotateGraceWindow = expirationConfig.getRefreshTokenRotateGraceWindow();
             OffsetDateTime deadlineTime = authRefreshTokenModel.getUsedTime().plus(refreshTokenRotateGraceWindow);
             if (currentTime.isAfter(deadlineTime)) {
+                authRefreshTokenRepository.updateRevokedForUnusedTokenByUserId(
+                        authRefreshTokenModel.getUserId(),
+                        true,
+                        currentTime
+                );
                 return RotateAccessTokenResult.failure(RotateAccessTokenResult.ResultCode.REPLAY_ATTACK);
             }
             return RotateAccessTokenResult.failure(RotateAccessTokenResult.ResultCode.CONFLICT_IN_GRACE_WINDOW);
@@ -271,11 +276,21 @@ public class TokenServiceImpl implements TokenService {
                 Duration refreshTokenRotateGraceWindow = expirationConfig.getRefreshTokenRotateGraceWindow();
                 OffsetDateTime deadlineTime = newAuthRefreshTokenModel.getUsedTime().plus(refreshTokenRotateGraceWindow);
                 if (currentTime.isAfter(deadlineTime)) {
+                    authRefreshTokenRepository.updateRevokedForUnusedTokenByUserId(
+                            authRefreshTokenModel.getUserId(),
+                            true,
+                            currentTime
+                    );
                     return RotateAccessTokenResult.failure(RotateAccessTokenResult.ResultCode.REPLAY_ATTACK);
                 }
                 return RotateAccessTokenResult.failure(RotateAccessTokenResult.ResultCode.CONFLICT_IN_GRACE_WINDOW);
             }
             log.warn("轮换令牌: affectedRow=0但是重新查询时used=false，状态不一致，tokenHash={}", tokenHash);
+            authRefreshTokenRepository.updateRevokedForUnusedTokenByUserId(
+                    authRefreshTokenModel.getUserId(),
+                    true,
+                    currentTime
+            );
             return RotateAccessTokenResult.failure(RotateAccessTokenResult.ResultCode.REPLAY_ATTACK); // 兜底
         }
         UserTokenResult userTokenResult = userTokenResultHolder.getUserTokenResult();
@@ -292,7 +307,14 @@ public class TokenServiceImpl implements TokenService {
      */
     @Data
     static class RotateUserTokenHolder implements Serializable {
+        /**
+         * 影响行数
+         */
         private int affectedRows;
+
+        /**
+         * 用户令牌结果
+         */
         private UserTokenResult userTokenResult;
     }
 }

@@ -89,7 +89,7 @@ public class AuthRefreshTokenPO implements Serializable {
     private OffsetDateTime revokedTime;
 
     /**
-     * 轮换后的新Token ID，用于追踪Token家族
+     * 轮换后的新Token哈希，用于追踪Token家族
      */
     @TableField("replaced_by")
     private String replacedBy;

@@ -59,7 +59,7 @@ public interface AuthRefreshTokenRepositoryImpl extends AuthRefreshTokenReposito
     }
 
     @Override
-    default int updateRevokedForUsedTokenByUserId(String userId, Boolean revoked, OffsetDateTime revokedTime) {
+    default int updateRevokedForUnusedTokenByUserId(String userId, Boolean revoked, OffsetDateTime revokedTime) {
         if (StringUtils.isBlank(userId)) {
             return 0;
         }
@@ -68,7 +68,7 @@ public interface AuthRefreshTokenRepositoryImpl extends AuthRefreshTokenReposito
         }
         LambdaUpdateWrapper<AuthRefreshTokenPO> updateWrapper = new LambdaUpdateWrapper<>();
         updateWrapper.eq(AuthRefreshTokenPO::getUserId, userId);
-        updateWrapper.eq(AuthRefreshTokenPO::getUsed, true);
+        updateWrapper.eq(AuthRefreshTokenPO::getUsed, false);
         updateWrapper.set(AuthRefreshTokenPO::getRevoked, revoked);
         if (revokedTime != null) {
             updateWrapper.set(AuthRefreshTokenPO::getRevokedTime, revokedTime);

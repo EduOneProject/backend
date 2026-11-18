@@ -199,7 +199,7 @@ CREATE TABLE `bds_auth_refresh_tokens`
     `created_time` datetime(3)  DEFAULT NULL COMMENT '创建时间',
     `revoked`      tinyint      DEFAULT NULL COMMENT '是否已撤销',
     `revoked_time` datetime(3)  DEFAULT NULL COMMENT '撤销时间',
-    `replaced_by`  varchar(32)  DEFAULT NULL COMMENT '轮换后的新Token ID，用于追踪Token家族',
+    `replaced_by`  varchar(64)  DEFAULT NULL COMMENT '轮换后的新Token哈希，用于追踪Token家族',
     `device_id`    varchar(128) DEFAULT NULL COMMENT '设备标识',
     `user_agent`   varchar(512) DEFAULT NULL COMMENT '客户端 UA',
     `ip_address`   varchar(45)  DEFAULT NULL COMMENT '客户端 IP',

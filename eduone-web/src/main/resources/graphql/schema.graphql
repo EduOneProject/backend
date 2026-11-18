@@ -81,6 +81,14 @@ type RegionTreeResponse {
     status: String
 }
 
+"""轮换令牌响应"""
+type RotateAccessTokenResponse {
+    """访问令牌"""
+    accessToken: String
+    """刷新令牌"""
+    refreshToken: String
+}
+
 """用户登录成功响应体"""
 type UserLoginSuccessResponse {
     """用户ID"""

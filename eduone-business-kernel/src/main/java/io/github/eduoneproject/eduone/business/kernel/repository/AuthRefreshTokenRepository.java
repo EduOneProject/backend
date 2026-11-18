@@ -39,14 +39,14 @@ public interface AuthRefreshTokenRepository {
     int updateUsedByTokenHashIfUnused(String tokenHash, Boolean used, OffsetDateTime usedTime, String replacedBy);
 
     /**
-     * 根据用户ID更新已使用的刷新令牌吊销信息
+     * 根据用户ID更新未被使用的刷新令牌吊销信息
      *
      * @param userId      用户ID
      * @param revoked     是否已被吊销
      * @param revokedTime 吊销的时间
      * @return 受影响的行数
      */
-    int updateRevokedForUsedTokenByUserId(String userId, Boolean revoked, OffsetDateTime revokedTime);
+    int updateRevokedForUnusedTokenByUserId(String userId, Boolean revoked, OffsetDateTime revokedTime);
 
     /**
      * 根据用户ID和刷新令牌哈希获取刷新令牌信息

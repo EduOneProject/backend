@@ -11,6 +11,8 @@ import lombok.Getter;
  */
 public enum CommonExceptionCode {
     // 全局通用错误码
+    CONTINUE(100_000_001, "继续"),
+
     PARAM_REQUIRED(400_000_001, "参数不能为空"),
     PARAM_INVALID(400_000_002, "参数非法"),
 
