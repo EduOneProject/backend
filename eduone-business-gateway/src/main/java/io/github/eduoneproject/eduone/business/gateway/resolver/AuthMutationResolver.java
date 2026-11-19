@@ -2,7 +2,7 @@ package io.github.eduoneproject.eduone.business.gateway.resolver;
 
 import io.github.eduoneproject.eduone.business.gateway.response.CommonBusinessResponse;
 import io.github.eduoneproject.eduone.business.gateway.response.RotateAccessTokenResponse;
-import io.github.eduoneproject.eduone.business.kernel.service.TokenService;
+import io.github.eduoneproject.eduone.business.kernel.appservice.AuthAppService;
 import io.github.eduoneproject.eduone.business.kernel.service.model.RotateAccessTokenResult;
 import io.github.eduoneproject.eduone.common.annotation.OptionalLogin;
 import io.github.eduoneproject.eduone.common.consts.CommonExceptionCode;
@@ -25,7 +25,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Controller
 public class AuthMutationResolver {
-    private final TokenService tokenService;
+    private final AuthAppService authAppService;
 
     /**
      * 轮换访问令牌
@@ -39,7 +39,7 @@ public class AuthMutationResolver {
         if (StringUtils.isBlank(refreshToken)) {
             return CommonBusinessResponse.failure(CommonExceptionCode.PARAM_REQUIRED, "刷新令牌不能为空");
         }
-        RotateAccessTokenResult rotateAccessTokenResult = tokenService.rotateAccessToken(refreshToken);
+        RotateAccessTokenResult rotateAccessTokenResult = authAppService.rotateAccessToken(refreshToken);
         RotateAccessTokenResult.ResultCode resultCode = rotateAccessTokenResult.getResultCode();
 
         if (resultCode == RotateAccessTokenResult.ResultCode.SUCCESS) { // 正常轮换
@@ -68,7 +68,7 @@ public class AuthMutationResolver {
         if (StringUtils.isBlank(sessionId)) {
             return CommonBusinessResponse.success(false);
         }
-        tokenService.revokeSession(sessionId);
+        authAppService.logout(sessionId);
         return CommonBusinessResponse.success(true);
     }
 }

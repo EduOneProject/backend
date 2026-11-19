@@ -3,6 +3,7 @@ package io.github.eduoneproject.eduone.business.kernel.service.model;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.time.OffsetDateTime;
 
 /**
  * 轮换访问令牌结果
@@ -15,6 +16,17 @@ public class RotateAccessTokenResult implements Serializable {
      * 轮换结果
      */
     private ResultCode resultCode;
+
+    /**
+     * 用户ID
+     */
+    private String userId;
+
+    /**
+     * 会话ID
+     */
+    private String sessionId;
+
     /**
      * 刷新令牌
      */
@@ -24,6 +36,11 @@ public class RotateAccessTokenResult implements Serializable {
      * 访问令牌
      */
     private String accessToken;
+
+    /**
+     * 轮换时间
+     */
+    private OffsetDateTime rotateTime;
 
     /**
      * 结果码
@@ -58,21 +75,6 @@ public class RotateAccessTokenResult implements Serializable {
          * token不存在
          */
         TOKEN_NOT_FOUND
-    }
-
-    /**
-     * 轮换成功
-     *
-     * @param refreshToken 刷新令牌
-     * @param accessToken  访问令牌
-     * @return 轮换结果
-     */
-    public static RotateAccessTokenResult success(String refreshToken, String accessToken) {
-        RotateAccessTokenResult result = new RotateAccessTokenResult();
-        result.setResultCode(ResultCode.SUCCESS);
-        result.setRefreshToken(refreshToken);
-        result.setAccessToken(accessToken);
-        return result;
     }
 
     /**

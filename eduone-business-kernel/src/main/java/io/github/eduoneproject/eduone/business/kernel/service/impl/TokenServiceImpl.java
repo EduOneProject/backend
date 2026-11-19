@@ -299,7 +299,14 @@ public class TokenServiceImpl implements TokenService {
             throw new BasicRuntimeException("生成用户令牌失败");
         }
 
-        return RotateAccessTokenResult.success(userTokenResult.getRefreshToken(), userTokenResult.getAccessToken());
+        RotateAccessTokenResult result = new RotateAccessTokenResult();
+        result.setResultCode(RotateAccessTokenResult.ResultCode.SUCCESS);
+        result.setSessionId(authRefreshTokenModel.getSessionId());
+        result.setUserId(authRefreshTokenModel.getUserId());
+        result.setRefreshToken(userTokenResult.getRefreshToken());
+        result.setAccessToken(userTokenResult.getAccessToken());
+        result.setRotateTime(currentTime);
+        return result;
     }
 
     @Override
