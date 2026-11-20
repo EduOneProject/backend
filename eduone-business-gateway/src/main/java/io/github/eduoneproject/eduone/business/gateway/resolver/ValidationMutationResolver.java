@@ -1,5 +1,7 @@
 package io.github.eduoneproject.eduone.business.gateway.resolver;
 
+import io.github.eduoneproject.eduone.business.common.config.ExpirationConfig;
+import io.github.eduoneproject.eduone.business.common.config.FrontendApplicationConfig;
 import io.github.eduoneproject.eduone.business.common.consts.BusinessExceptionCode;
 import io.github.eduoneproject.eduone.business.common.domain.verification.VerificationContext;
 import io.github.eduoneproject.eduone.business.common.domain.verification.VerificationStep;
@@ -14,13 +16,22 @@ import io.github.eduoneproject.eduone.business.kernel.service.model.CaptchaValid
 import io.github.eduoneproject.eduone.business.kernel.service.param.CaptchaValidationParam;
 import io.github.eduoneproject.eduone.business.kernel.service.param.MathImageCaptchaGenerationParam;
 import io.github.eduoneproject.eduone.common.annotation.OptionalLogin;
+import io.github.eduoneproject.eduone.common.domain.context.ServiceContext;
+import io.github.eduoneproject.eduone.common.domain.context.ServiceContextLocal;
+import io.github.eduoneproject.eduone.common.domain.context.UserIdentity;
 import io.github.eduoneproject.eduone.common.exception.BasicRuntimeException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
+import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
+
+import java.time.Duration;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * 验证相关业务接口
@@ -32,6 +43,41 @@ import org.springframework.stereotype.Controller;
 public class ValidationMutationResolver {
     @Qualifier("mathImageCaptchaBusinessService")
     private final CaptchaBusinessService<String, MathImageCaptchaGenerationParam> mathImageCaptchaBusinessService;
+    private final FrontendApplicationConfig frontendApplicationConfig;
+    private final ExpirationConfig expirationConfig;
+
+    /**
+     * 请求验证上下文
+     *
+     * @param type 类型
+     * @return 验证上下文token字符串
+     */
+    @OptionalLogin
+    @QueryMapping
+    public String requireVerificationContext(@Argument String type) {
+        if (StringUtils.isBlank(type)) {
+            return null;
+        }
+        Map<String, String> verificationContextMap = frontendApplicationConfig.getVerificationContext();
+        String token = verificationContextMap.get(type);
+        if (StringUtils.isBlank(token)) {
+            return null;
+        }
+        long createTime = System.currentTimeMillis();
+        Duration verificationContextExpireTime = expirationConfig.getVerificationContextAdminLogin();
+        String sessionId = Optional.ofNullable(ServiceContextLocal.getServiceContext())
+                .map(ServiceContext::getUserIdentity)
+                .map(UserIdentity::getSessionId)
+                .orElse(null);
+
+        VerificationContext verificationContext = VerificationContext.decrypt(token);
+        if (StringUtils.isNotBlank(sessionId)) {
+            verificationContext.setBindSessionId(sessionId);
+        }
+        verificationContext.setCreateTime(createTime);
+        verificationContext.setOverallExpireTime(createTime + verificationContextExpireTime.toMillis());
+        return VerificationContext.encrypt(verificationContext);
+    }
 
     /**
      * 请求图形验证码

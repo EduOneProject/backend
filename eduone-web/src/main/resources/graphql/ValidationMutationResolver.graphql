@@ -4,3 +4,8 @@ extend type Mutation {
     """校验图形验证码"""
     validateImageCaptcha(request: ImageCaptchaValidRequest): StringBusinessResponse @commonBusinessResponse(for: "String")
 }
+
+extend type Query {
+    """请求验证上下文"""
+    requireVerificationContext(type: String): String
+}

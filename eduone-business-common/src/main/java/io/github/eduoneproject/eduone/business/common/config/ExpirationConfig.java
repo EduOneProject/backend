@@ -34,4 +34,9 @@ public class ExpirationConfig {
      * 刷新令牌轮换宽限期
      */
     private Duration refreshTokenRotateGraceWindow;
+
+    /**
+     * 验证上下文管理员登录过期时间
+     */
+    private Duration verificationContextAdminLogin = Duration.ofMinutes(5);
 }

@@ -24,6 +24,7 @@ expiration:
   access-token: 15m
   refresh-token: 30d
   refresh-token-rotate-grace-window: 30s
+  verification-context-admin-login: 5m
 
 # 前端应用相关配置
 frontend-application:

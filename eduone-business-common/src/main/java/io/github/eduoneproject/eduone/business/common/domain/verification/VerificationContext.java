@@ -31,6 +31,11 @@ public class VerificationContext implements Serializable {
     private List<VerificationStep> steps;
 
     /**
+     * 绑定的会话，登录态用sessionId，其他用设备指纹（如有）。为空则不校验
+     */
+    private String bindSessionId;
+
+    /**
      * 创建时间
      */
     private Long createTime;
@@ -55,6 +60,15 @@ public class VerificationContext implements Serializable {
                 .filter(step -> Objects.equals(step.getVerificationScene(), scene) && Objects.equals(step.getVerificationType(), type))
                 .findFirst()
                 .orElse(null);
+    }
+
+    /**
+     * 验证是否过期
+     *
+     * @return 是否过期
+     */
+    public boolean isExpired() {
+        return System.currentTimeMillis() > overallExpireTime;
     }
 
     /**
