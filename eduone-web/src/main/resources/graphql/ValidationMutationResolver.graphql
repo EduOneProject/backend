@@ -1,11 +1,26 @@
 extend type Mutation {
-    """请求图形验证码"""
+    """
+    请求图形验证码
+
+    @param request 图形验证码请求参数
+    @return 图形验证码信息
+    """
     applyImageCaptcha(request: ApplyImageCaptchaRequest): ImageCaptchaResponseBusinessResponse @commonBusinessResponse(for: "ImageCaptchaResponse")
-    """校验图形验证码"""
+    """
+    校验图形验证码
+
+    @param request 图形验证码校验请求参数
+    @return 校验结果
+    """
     validateImageCaptcha(request: ImageCaptchaValidRequest): StringBusinessResponse @commonBusinessResponse(for: "String")
 }
 
 extend type Query {
-    """请求验证上下文"""
+    """
+    请求验证上下文
+
+    @param type 类型
+    @return 验证上下文token字符串
+    """
     requireVerificationContext(type: String): String
 }

@@ -1,4 +1,9 @@
 extend type Mutation {
-    """以密码方式登录"""
+    """
+    以密码方式登录
+
+    @param request 登录请求参数
+    @return 登录结果
+    """
     loginWithPassword(request: LoginWithPasswordRequest): UserLoginSuccessResponseBusinessResponse @commonBusinessResponse(for: "UserLoginSuccessResponse")
 }

@@ -1,10 +1,36 @@
 extend type Query {
-    """查询业务字典"""
+    """
+    查询业务字典
+
+    @param request 查询参数
+    @param sortList 排序参数
+    @return 业务字典列表
+    """
     listBusinessDictionary(request: BusinessDictionaryRequest, sortList: [BusinessDictionarySortRequest]): [BusinessDictionaryResponse]
-    """查询业务字典类型"""
+    """
+    查询业务字典类型
+
+    @param request 查询参数
+    @param sortList 排序参数
+    @return 业务字典类型列表
+    """
     listBusinessDictionaryType(request: BusinessDictionaryTypeRequest, sortList: [BusinessDictionaryTypeSortRequest]): [BusinessDictionaryTypeResponse]
-    """分页查询业务字典"""
+    """
+    分页查询业务字典
+
+    @param page 分页参数
+    @param request 查询参数
+    @param sortList 排序参数
+    @return 业务字典列表
+    """
     pageBusinessDictionary(page: PageRequest, request: BusinessDictionaryRequest, sortList: [BusinessDictionarySortRequest]): BusinessDictionaryResponseDataPage @page(for: "BusinessDictionaryResponse")
-    """分页查询业务字典类型"""
+    """
+    分页查询业务字典类型
+
+    @param page 分页参数
+    @param request 查询参数
+    @param sortList 排序参数
+    @return 业务字典类型列表
+    """
     pageBusinessDictionaryType(page: PageRequest, request: BusinessDictionaryTypeRequest, sortList: [BusinessDictionaryTypeSortRequest]): BusinessDictionaryTypeResponseDataPage @page(for: "BusinessDictionaryTypeResponse")
 }

@@ -1,4 +1,9 @@
 extend type Query {
-    """查询地区树信息"""
+    """
+    查询地区树信息
+
+    @param request 查询参数
+    @return 地区树
+    """
     listRegionTree(request: RegionTreeQueryRequest): [RegionTreeResponse]
 }
