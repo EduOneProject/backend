@@ -117,54 +117,42 @@ public class SdlFormatWriter {
                 scalarDescList.add(defContent);
             } else if (kind == TypeKind.OBJECT) {
                 StringBuilder defContent = new StringBuilder();
-                if (StringUtils.isNotBlank(typeDef.getDescription())) {
-                    defContent.append("\"\"\"").append(typeDef.getDescription()).append("\"\"\"\n");
-                }
+                appendDescription(defContent, "", typeDef.getDescription());
                 defContent.append("type ").append(typeDef.getName()).append(" {\n");
                 List<FieldDef> fieldDefList = typeDef.getFields();
                 if (CollectionUtils.isEmpty(fieldDefList)) {
                     throw new RuntimeException("类型定义字段为空：" + typeDef);
                 }
                 for (FieldDef fieldDef : fieldDefList) {
-                    if (StringUtils.isNotBlank(fieldDef.getDescription())) {
-                        defContent.append(INDENT).append("\"\"\"").append(fieldDef.getDescription()).append("\"\"\"\n");
-                    }
+                    appendDescription(defContent, INDENT, fieldDef.getDescription());
                     defContent.append(INDENT).append(fieldDef.getName()).append(": ").append(fieldDef.getType()).append("\n");
                 }
                 defContent.append("}");
                 objectDescList.add(defContent.toString());
             } else if (kind == TypeKind.INPUT) {
                 StringBuilder defContent = new StringBuilder();
-                if (StringUtils.isNotBlank(typeDef.getDescription())) {
-                    defContent.append("\"\"\"").append(typeDef.getDescription()).append("\"\"\"\n");
-                }
+                appendDescription(defContent, "", typeDef.getDescription());
                 defContent.append("input ").append(typeDef.getName()).append(" {\n");
                 List<FieldDef> fieldDefList = typeDef.getFields();
                 if (CollectionUtils.isEmpty(fieldDefList)) {
                     throw new RuntimeException("类型定义字段为空：" + typeDef);
                 }
                 for (FieldDef fieldDef : fieldDefList) {
-                    if (StringUtils.isNotBlank(fieldDef.getDescription())) {
-                        defContent.append(INDENT).append("\"\"\"").append(fieldDef.getDescription()).append("\"\"\"\n");
-                    }
+                    appendDescription(defContent, INDENT, fieldDef.getDescription());
                     defContent.append(INDENT).append(fieldDef.getName()).append(": ").append(fieldDef.getType()).append("\n");
                 }
                 defContent.append("}");
                 inputObjectDescList.add(defContent.toString());
             } else if (kind == TypeKind.ENUM) {
                 StringBuilder defContent = new StringBuilder();
-                if (StringUtils.isNotBlank(typeDef.getDescription())) {
-                    defContent.append("\"\"\"").append(typeDef.getDescription()).append("\"\"\"\n");
-                }
+                appendDescription(defContent, "", typeDef.getDescription());
                 defContent.append("enum ").append(typeDef.getName()).append(" {\n");
                 List<FieldDef> fieldDefList = typeDef.getFields();
                 if (CollectionUtils.isEmpty(fieldDefList)) {
                     throw new RuntimeException("类型定义字段为空：" + typeDef);
                 }
                 for (FieldDef fieldDef : fieldDefList) {
-                    if (StringUtils.isNotBlank(fieldDef.getDescription())) {
-                        defContent.append(INDENT).append("\"\"\"").append(fieldDef.getDescription()).append("\"\"\"\n");
-                    }
+                    appendDescription(defContent, INDENT, fieldDef.getDescription());
                     defContent.append(INDENT).append(fieldDef.getName()).append("\n");
                 }
                 defContent.append("}");
@@ -207,10 +195,7 @@ public class SdlFormatWriter {
 
             for (OperationField operationField : mutationFieldList) {
                 // 注释
-                String description = operationField.getDescription();
-                if (StringUtils.isNotBlank(description)) {
-                    content.append(INDENT).append("\"\"\"").append(description).append("\"\"\"\n");
-                }
+                appendDescription(content, INDENT, buildOperationFieldDescription(operationField));
                 // 名称
                 content.append(INDENT).append(operationField.getName());
                 // 参数
@@ -237,10 +222,7 @@ public class SdlFormatWriter {
 
             for (OperationField operationField : queryFieldList) {
                 // 注释
-                String description = operationField.getDescription();
-                if (StringUtils.isNotBlank(description)) {
-                    content.append(INDENT).append("\"\"\"").append(description).append("\"\"\"\n");
-                }
+                appendDescription(content, INDENT, buildOperationFieldDescription(operationField));
                 // 名称
                 content.append(INDENT).append(operationField.getName());
                 // 参数
@@ -257,5 +239,95 @@ public class SdlFormatWriter {
             content.append("}");
         }
         return content.toString();
+    }
+
+    /**
+     * 构建操作字段描述
+     * <p>将入参注释和返回值注释以Javadoc标签的形式追加到方法注释中，便于后续翻译为TypeScript方法</p>
+     *
+     * @param operationField 操作字段
+     * @return 描述
+     */
+    private static String buildOperationFieldDescription(OperationField operationField) {
+        List<String> lineList = new ArrayList<>();
+        if (StringUtils.isNotBlank(operationField.getDescription())) {
+            lineList.add(operationField.getDescription().strip());
+        }
+
+        List<String> tagList = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(operationField.getArguments())) {
+            for (ArgumentDef argumentDef : operationField.getArguments()) {
+                if (StringUtils.isNotBlank(argumentDef.getDescription())) {
+                    tagList.add("@param " + argumentDef.getName() + " " + toSingleLine(argumentDef.getDescription()));
+                }
+            }
+        }
+        if (StringUtils.isNotBlank(operationField.getReturnDescription())) {
+            tagList.add("@return " + toSingleLine(operationField.getReturnDescription()));
+        }
+
+        if (tagList.isEmpty()) {
+            return operationField.getDescription();
+        }
+        if (!lineList.isEmpty()) {
+            lineList.add("");
+        }
+        lineList.addAll(tagList);
+        return String.join("\n", lineList);
+    }
+
+    /**
+     * 追加描述注释
+     * <p>单行描述输出为"""描述"""，多行描述输出为块字符串，保证缩进干净</p>
+     *
+     * @param content     文件内容
+     * @param indent      缩进
+     * @param description 描述
+     */
+    private static void appendDescription(StringBuilder content, String indent, String description) {
+        String normalizedDescription = normalizeDescription(description);
+        if (StringUtils.isBlank(normalizedDescription)) {
+            return;
+        }
+        List<String> lineList = Arrays.asList(normalizedDescription.split("\\R"));
+        if (lineList.size() == 1) {
+            content.append(indent).append("\"\"\"").append(lineList.get(0)).append("\"\"\"\n");
+            return;
+        }
+        content.append(indent).append("\"\"\"\n");
+        for (String line : lineList) {
+            if (line.isEmpty()) {
+                content.append("\n");
+                continue;
+            }
+            content.append(indent).append(line).append("\n");
+        }
+        content.append(indent).append("\"\"\"\n");
+    }
+
+    /**
+     * 规范化描述
+     * <p>去除首尾空白行，并清理每行行尾空白</p>
+     *
+     * @param description 描述
+     * @return 规范化后的描述
+     */
+    private static String normalizeDescription(String description) {
+        if (StringUtils.isBlank(description)) {
+            return null;
+        }
+        return description.strip().lines()
+                .map(String::stripTrailing)
+                .collect(Collectors.joining("\n"));
+    }
+
+    /**
+     * 转换为单行文本
+     *
+     * @param text 文本
+     * @return 单行文本
+     */
+    private static String toSingleLine(String text) {
+        return text.strip().replaceAll("\\s+", " ");
     }
 }

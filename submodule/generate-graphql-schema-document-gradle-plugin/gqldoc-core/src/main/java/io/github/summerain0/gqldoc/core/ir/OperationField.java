@@ -43,6 +43,12 @@ public class OperationField implements Serializable {
     private final TypeRef returnType;
 
     /**
+     * 返回值描述
+     */
+    @Getter
+    private final String returnDescription;
+
+    /**
      * 是否弃用
      */
     @Getter

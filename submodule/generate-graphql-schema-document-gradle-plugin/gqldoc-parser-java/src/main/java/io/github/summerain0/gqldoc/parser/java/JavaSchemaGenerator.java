@@ -148,6 +148,7 @@ public class JavaSchemaGenerator {
                 }
 
                 // 入参
+                Map<String, String> paramCommentMap = javaSourceCodeResolver.getMethodParamComments(qualifiedClassName, method.getName());
                 List<ArgumentDef> argumentDefList = new ArrayList<>();
                 Parameter[] parameters = method.getParameters();
                 for (Parameter parameter : parameters) {
@@ -159,6 +160,7 @@ public class JavaSchemaGenerator {
                     TypeRef typeRef = resolveType(parameterType, false);
                     ArgumentDef argumentDef = ArgumentDef.builder()
                             .name(parameterName)
+                            .description(paramCommentMap.get(parameterName))
                             .type(typeRef)
                             .build();
                     argumentDefList.add(argumentDef);
@@ -171,6 +173,7 @@ public class JavaSchemaGenerator {
                         .name(method.getName())
                         .description(javaSourceCodeResolver.getMethodComment(qualifiedClassName, method.getName()))
                         .returnType(returnTypeRef)
+                        .returnDescription(javaSourceCodeResolver.getMethodReturnComment(qualifiedClassName, method.getName()))
                         .arguments(argumentDefList)
                         .build();
                 if (operationType == OperationType.QUERY) {

@@ -11,6 +11,7 @@ import com.github.javaparser.ast.comments.JavadocComment;
 import com.github.javaparser.ast.expr.Name;
 import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.javadoc.Javadoc;
+import com.github.javaparser.javadoc.JavadocBlockTag;
 import com.github.javaparser.javadoc.description.JavadocDescription;
 import org.apache.commons.lang3.StringUtils;
 
@@ -176,6 +177,72 @@ public class JavaSourceCodeResolver {
      * @return 方法注释
      */
     public String getMethodComment(String className, String methodName) {
+        Javadoc javadoc = getMethodJavadoc(className, methodName);
+        if (javadoc == null) {
+            return null;
+        }
+        return javadoc.getDescription().toText();
+    }
+
+    /**
+     * 获取方法参数注释
+     *
+     * @param className  类名
+     * @param methodName 方法名
+     * @return 参数名到参数注释的映射
+     */
+    public Map<String, String> getMethodParamComments(String className, String methodName) {
+        Javadoc javadoc = getMethodJavadoc(className, methodName);
+        if (javadoc == null) {
+            return Collections.emptyMap();
+        }
+        Map<String, String> paramCommentMap = new LinkedHashMap<>();
+        for (JavadocBlockTag blockTag : javadoc.getBlockTags()) {
+            if (blockTag.getType() != JavadocBlockTag.Type.PARAM) {
+                continue;
+            }
+            String paramName = blockTag.getName().orElse(null);
+            String paramComment = blockTag.getContent().toText();
+            if (StringUtils.isBlank(paramName) || StringUtils.isBlank(paramComment)) {
+                continue;
+            }
+            paramCommentMap.put(paramName, paramComment);
+        }
+        return paramCommentMap;
+    }
+
+    /**
+     * 获取方法返回值注释
+     *
+     * @param className  类名
+     * @param methodName 方法名
+     * @return 返回值注释
+     */
+    public String getMethodReturnComment(String className, String methodName) {
+        Javadoc javadoc = getMethodJavadoc(className, methodName);
+        if (javadoc == null) {
+            return null;
+        }
+        for (JavadocBlockTag blockTag : javadoc.getBlockTags()) {
+            if (blockTag.getType() != JavadocBlockTag.Type.RETURN) {
+                continue;
+            }
+            String returnComment = blockTag.getContent().toText();
+            if (StringUtils.isNotBlank(returnComment)) {
+                return returnComment;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 获取方法Javadoc
+     *
+     * @param className  类名
+     * @param methodName 方法名
+     * @return 方法Javadoc
+     */
+    private Javadoc getMethodJavadoc(String className, String methodName) {
         String classFilePath = qualifiedNameToPathMap.get(className);
         if (classFilePath == null) {
             return null;
@@ -204,8 +271,6 @@ public class JavaSourceCodeResolver {
                                 if (Objects.equals(methodDeclaration.getNameAsString(), methodName)) {
                                     return methodDeclaration.getJavadocComment()
                                             .map(JavadocComment::parse)
-                                            .map(Javadoc::getDescription)
-                                            .map(JavadocDescription::toText)
                                             .orElse(null);
                                 }
                             }

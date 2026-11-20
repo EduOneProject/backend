@@ -24,6 +24,12 @@ public class ArgumentDef implements Serializable {
     private final String name;
 
     /**
+     * 参数描述
+     */
+    @Getter
+    private final String description;
+
+    /**
      * 参数类型
      */
     @Getter
