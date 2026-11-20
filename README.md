@@ -9,6 +9,11 @@
 [![Gradle](https://img.shields.io/badge/Gradle-9.5.1-blue?logo=gradle)](https://gradle.org/)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](#-贡献指南)
+[![Status](https://img.shields.io/badge/Status-Under%20Development-yellow.svg)](#)
+
+**⚠️ 项目正在开发中，敬请期待**
+
+EduOne 仍在积极开发，架构与接口可能随时调整。当前版本尚不可用于生产环境，欢迎关注项目进展或参与共建。
 
 </div>
 
