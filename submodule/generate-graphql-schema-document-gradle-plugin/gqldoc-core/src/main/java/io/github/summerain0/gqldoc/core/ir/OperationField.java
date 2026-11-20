@@ -49,6 +49,12 @@ public class OperationField implements Serializable {
     private final String returnDescription;
 
     /**
+     * 存储@see注释列表
+     */
+    @Getter
+    private final List<String> seeTags;
+
+    /**
      * 是否弃用
      */
     @Getter

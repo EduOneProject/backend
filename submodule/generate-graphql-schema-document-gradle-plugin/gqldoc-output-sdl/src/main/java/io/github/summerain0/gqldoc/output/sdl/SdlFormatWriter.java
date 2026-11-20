@@ -311,6 +311,13 @@ public class SdlFormatWriter {
         if (StringUtils.isNotBlank(operationField.getReturnDescription())) {
             tagList.add("@return " + toSingleLine(operationField.getReturnDescription()));
         }
+        if (CollectionUtils.isNotEmpty(operationField.getSeeTags())) {
+            for (String seeTag : operationField.getSeeTags()) {
+                if (StringUtils.isNotBlank(seeTag)) {
+                    tagList.add("@see " + toSingleLine(seeTag));
+                }
+            }
+        }
 
         if (tagList.isEmpty()) {
             return operationField.getDescription();
@@ -337,7 +344,7 @@ public class SdlFormatWriter {
         }
         List<String> lineList = Arrays.asList(normalizedDescription.split("\\R"));
         if (lineList.size() == 1) {
-            content.append(indent).append("\"\"\"").append(lineList.get(0)).append("\"\"\"\n");
+            content.append(indent).append("\"\"\"").append(lineList.getFirst()).append("\"\"\"\n");
             return;
         }
         content.append(indent).append("\"\"\"\n");

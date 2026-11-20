@@ -4,6 +4,7 @@ import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseResult;
 import com.github.javaparser.ParserConfiguration;
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.*;
@@ -12,7 +13,6 @@ import com.github.javaparser.ast.expr.Name;
 import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.javadoc.Javadoc;
 import com.github.javaparser.javadoc.JavadocBlockTag;
-import com.github.javaparser.javadoc.description.JavadocDescription;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
@@ -113,6 +113,141 @@ public class JavaSourceCodeResolver {
      * @return 类注释
      */
     public String getClassComment(String className) {
+        Javadoc javadoc = getClassJavadoc(className);
+        if (javadoc == null) {
+            return null;
+        }
+        return javadoc.getDescription().toText();
+    }
+
+    /**
+     * 获取类@see注释
+     *
+     * @param className 类名
+     * @return @see注释列表
+     */
+    public List<String> getClassSeeTags(String className) {
+        return getSeeTags(getClassJavadoc(className));
+    }
+
+    /**
+     * 获取方法@see注释
+     *
+     * @param className  类名
+     * @param methodName 方法名
+     * @return @see注释列表
+     */
+    public List<String> getMethodSeeTags(String className, String methodName) {
+        return getSeeTags(getMethodJavadoc(className, methodName));
+    }
+
+    /**
+     * 获取字段@see注释
+     *
+     * @param className 类名
+     * @param fieldName 字段名
+     * @return @see注释列表
+     */
+    public List<String> getFieldSeeTags(String className, String fieldName) {
+        return getSeeTags(getFieldJavadoc(className, fieldName));
+    }
+
+    /**
+     * 是否包含指定全限定名的类
+     *
+     * @param qualifiedClassName 全限定类名
+     * @return 是否包含
+     */
+    public boolean containsClass(String qualifiedClassName) {
+        return qualifiedNameToPathMap.containsKey(qualifiedClassName);
+    }
+
+    /**
+     * 解析类引用候选全限定名
+     * <p>按原始引用、显式导入、同包、通配符导入、java.lang的顺序返回候选</p>
+     *
+     * @param ownerClassName 引用所在类的全限定名
+     * @param referenceName  类引用名称
+     * @return 候选全限定类名列表
+     */
+    public List<String> resolveClassReferenceCandidates(String ownerClassName, String referenceName) {
+        if (StringUtils.isBlank(referenceName)) {
+            return Collections.emptyList();
+        }
+        Set<String> candidateSet = new LinkedHashSet<>();
+        if (referenceName.contains(".")) {
+            candidateSet.add(referenceName);
+            String firstSegment = StringUtils.substringBefore(referenceName, ".");
+            String remainingSegment = StringUtils.substringAfter(referenceName, ".");
+            for (String firstSegmentCandidate : resolveSimpleNameCandidates(ownerClassName, firstSegment)) {
+                candidateSet.add(firstSegmentCandidate + "." + remainingSegment);
+            }
+        } else {
+            candidateSet.addAll(resolveSimpleNameCandidates(ownerClassName, referenceName));
+        }
+        return new ArrayList<>(candidateSet);
+    }
+
+    /**
+     * 获取类Javadoc
+     *
+     * @param className 类名
+     * @return 类Javadoc
+     */
+    private Javadoc getClassJavadoc(String className) {
+        CompilationUnit compilationUnit = getCompilationUnit(className);
+        if (compilationUnit == null) {
+            return null;
+        }
+        String packageName = compilationUnit.getPackageDeclaration()
+                .map(PackageDeclaration::getName)
+                .map(Name::asString)
+                .orElse(null);
+        // 类和接口
+        List<ClassOrInterfaceDeclaration> classOrInterfaceDeclarationList = compilationUnit.findAll(ClassOrInterfaceDeclaration.class);
+        for (ClassOrInterfaceDeclaration classOrInterfaceDeclaration : classOrInterfaceDeclarationList) {
+            if (Objects.equals(getQualifiedName(packageName, classOrInterfaceDeclaration.getNameAsString()), className)) {
+                return classOrInterfaceDeclaration.getJavadocComment()
+                        .map(JavadocComment::parse)
+                        .orElse(null);
+            }
+        }
+        // 枚举
+        List<EnumDeclaration> enumDeclarationList = compilationUnit.findAll(EnumDeclaration.class);
+        for (EnumDeclaration enumDeclaration : enumDeclarationList) {
+            if (Objects.equals(getQualifiedName(packageName, enumDeclaration.getNameAsString()), className)) {
+                return enumDeclaration.getJavadocComment()
+                        .map(JavadocComment::parse)
+                        .orElse(null);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 获取@see注释
+     *
+     * @param javadoc Javadoc
+     * @return @see注释列表
+     */
+    private List<String> getSeeTags(Javadoc javadoc) {
+        if (javadoc == null) {
+            return Collections.emptyList();
+        }
+        return javadoc.getBlockTags().stream()
+                .filter(blockTag -> blockTag.getType() == JavadocBlockTag.Type.SEE)
+                .map(blockTag -> blockTag.getContent().toText())
+                .filter(StringUtils::isNotBlank)
+                .toList();
+    }
+
+    /**
+     * 获取编译单元
+     *
+     * @param className 类名
+     * @return 编译单元
+     */
+    private CompilationUnit getCompilationUnit(String className) {
         String classFilePath = qualifiedNameToPathMap.get(className);
         if (classFilePath == null) {
             return null;
@@ -120,53 +255,64 @@ public class JavaSourceCodeResolver {
         try {
             ParseResult<CompilationUnit> parseResult = javaParser.parse(Path.of(classFilePath));
             if (parseResult.isSuccessful()) {
-                Optional<CompilationUnit> compilationUnitOptional = parseResult.getResult();
-                if (compilationUnitOptional.isPresent()) {
-                    CompilationUnit compilationUnit = compilationUnitOptional.get();
-                    String packageName = compilationUnit.getPackageDeclaration()
-                            .map(PackageDeclaration::getName)
-                            .map(Name::asString)
-                            .orElse(null);
-                    // 类和接口
-                    List<ClassOrInterfaceDeclaration> classOrInterfaceDeclarationList = compilationUnit.findAll(ClassOrInterfaceDeclaration.class);
-                    for (ClassOrInterfaceDeclaration classOrInterfaceDeclaration : classOrInterfaceDeclarationList) {
-                        String qualifiedName;
-                        if (StringUtils.isNotBlank(packageName)) {
-                            qualifiedName = packageName + "." + classOrInterfaceDeclaration.getNameAsString();
-                        } else {
-                            qualifiedName = classOrInterfaceDeclaration.getNameAsString();
-                        }
-                        if (Objects.equals(qualifiedName, className)) {
-                            return classOrInterfaceDeclaration.getJavadocComment()
-                                    .map(JavadocComment::parse)
-                                    .map(Javadoc::getDescription)
-                                    .map(JavadocDescription::toText)
-                                    .orElse(null);
-                        }
-                    }
-                    // 枚举
-                    List<EnumDeclaration> enumDeclarationList = compilationUnit.findAll(EnumDeclaration.class);
-                    for (EnumDeclaration enumDeclaration : enumDeclarationList) {
-                        String qualifiedName;
-                        if (StringUtils.isNotBlank(packageName)) {
-                            qualifiedName = packageName + "." + enumDeclaration.getNameAsString();
-                        } else {
-                            qualifiedName = enumDeclaration.getNameAsString();
-                        }
-                        if (Objects.equals(qualifiedName, className)) {
-                            return enumDeclaration.getJavadocComment()
-                                    .map(JavadocComment::parse)
-                                    .map(Javadoc::getDescription)
-                                    .map(JavadocDescription::toText)
-                                    .orElse(null);
-                        }
-                    }
-                }
+                return parseResult.getResult().orElse(null);
             }
             return null;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * 解析简单类名的候选全限定名
+     *
+     * @param ownerClassName 引用所在类的全限定名
+     * @param simpleName     简单类名
+     * @return 候选全限定类名列表
+     */
+    private List<String> resolveSimpleNameCandidates(String ownerClassName, String simpleName) {
+        Set<String> candidateSet = new LinkedHashSet<>();
+        CompilationUnit compilationUnit = getCompilationUnit(ownerClassName);
+        if (compilationUnit != null) {
+            // 显式导入
+            for (ImportDeclaration importDeclaration : compilationUnit.getImports()) {
+                if (importDeclaration.isStatic() || importDeclaration.isAsterisk()) {
+                    continue;
+                }
+                String importName = importDeclaration.getNameAsString();
+                if (Objects.equals(StringUtils.substringAfterLast(importName, "."), simpleName)) {
+                    candidateSet.add(importName);
+                }
+            }
+            // 同包
+            String packageName = compilationUnit.getPackageDeclaration()
+                    .map(PackageDeclaration::getName)
+                    .map(Name::asString)
+                    .orElse(null);
+            if (StringUtils.isNotBlank(packageName)) {
+                candidateSet.add(packageName + "." + simpleName);
+            }
+            // 通配符导入
+            for (ImportDeclaration importDeclaration : compilationUnit.getImports()) {
+                if (importDeclaration.isStatic() || !importDeclaration.isAsterisk()) {
+                    continue;
+                }
+                candidateSet.add(importDeclaration.getNameAsString() + "." + simpleName);
+            }
+        }
+        candidateSet.add("java.lang." + simpleName);
+        return new ArrayList<>(candidateSet);
+    }
+
+    /**
+     * 获取全限定名
+     *
+     * @param packageName 包名
+     * @param simpleName  简单名
+     * @return 全限定名
+     */
+    private static String getQualifiedName(String packageName, String simpleName) {
+        return StringUtils.isNotBlank(packageName) ? packageName + "." + simpleName : simpleName;
     }
 
     /**
@@ -292,75 +438,64 @@ public class JavaSourceCodeResolver {
      * @return 字段注释
      */
     public String getFieldComment(String className, String fieldName) {
-        String classFilePath = qualifiedNameToPathMap.get(className);
-        if (classFilePath == null) {
+        Javadoc javadoc = getFieldJavadoc(className, fieldName);
+        if (javadoc == null) {
             return null;
         }
-        try {
-            ParseResult<CompilationUnit> parseResult = javaParser.parse(Path.of(classFilePath));
-            if (parseResult.isSuccessful()) {
-                Optional<CompilationUnit> compilationUnitOptional = parseResult.getResult();
-                if (compilationUnitOptional.isPresent()) {
-                    CompilationUnit compilationUnit = compilationUnitOptional.get();
-                    String packageName = compilationUnit.getPackageDeclaration()
-                            .map(PackageDeclaration::getName)
-                            .map(Name::asString)
-                            .orElse(null);
-                    // 类和接口
-                    List<ClassOrInterfaceDeclaration> classOrInterfaceDeclarationList = compilationUnit.findAll(ClassOrInterfaceDeclaration.class);
-                    for (ClassOrInterfaceDeclaration classOrInterfaceDeclaration : classOrInterfaceDeclarationList) {
-                        String qualifiedName;
-                        if (StringUtils.isNotBlank(packageName)) {
-                            qualifiedName = packageName + "." + classOrInterfaceDeclaration.getNameAsString();
-                        } else {
-                            qualifiedName = classOrInterfaceDeclaration.getNameAsString();
-                        }
-                        if (Objects.equals(qualifiedName, className)) {
-                            List<FieldDeclaration> fieldDeclarationList = classOrInterfaceDeclaration.findAll(FieldDeclaration.class);
-                            for (FieldDeclaration fieldDeclaration : fieldDeclarationList) {
-                                NodeList<VariableDeclarator> variableDeclaratorNodeList = fieldDeclaration.getVariables();
-                                for (VariableDeclarator variableDeclarator : variableDeclaratorNodeList) {
-                                    SimpleName simpleName = variableDeclarator.getName();
-                                    String name = simpleName.asString();
-                                    if (Objects.equals(name, fieldName)) {
-                                        return fieldDeclaration.getJavadocComment()
-                                                .map(JavadocComment::parse)
-                                                .map(Javadoc::getDescription)
-                                                .map(JavadocDescription::toText)
-                                                .orElse(null);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    // 枚举
-                    List<EnumDeclaration> enumDeclarationList = compilationUnit.findAll(EnumDeclaration.class);
-                    for (EnumDeclaration enumDeclaration : enumDeclarationList) {
-                        String qualifiedName;
-                        if (StringUtils.isNotBlank(packageName)) {
-                            qualifiedName = packageName + "." + enumDeclaration.getNameAsString();
-                        } else {
-                            qualifiedName = enumDeclaration.getNameAsString();
-                        }
-                        if (Objects.equals(qualifiedName, className)) {
-                            List<EnumConstantDeclaration> enumConstantDeclarationList = enumDeclaration.findAll(EnumConstantDeclaration.class);
-                            for (EnumConstantDeclaration enumConstantDeclaration : enumConstantDeclarationList) {
-                                if (Objects.equals(enumConstantDeclaration.getNameAsString(), fieldName)) {
-                                    return enumConstantDeclaration.getJavadocComment()
-                                            .map(JavadocComment::parse)
-                                            .map(Javadoc::getDescription)
-                                            .map(JavadocDescription::toText)
-                                            .orElse(null);
-                                }
-                            }
-                        }
+        return javadoc.getDescription().toText();
+    }
+
+    /**
+     * 获取字段Javadoc
+     *
+     * @param className 类名
+     * @param fieldName 字段名
+     * @return 字段Javadoc
+     */
+    private Javadoc getFieldJavadoc(String className, String fieldName) {
+        CompilationUnit compilationUnit = getCompilationUnit(className);
+        if (compilationUnit == null) {
+            return null;
+        }
+        String packageName = compilationUnit.getPackageDeclaration()
+                .map(PackageDeclaration::getName)
+                .map(Name::asString)
+                .orElse(null);
+        // 类和接口
+        List<ClassOrInterfaceDeclaration> classOrInterfaceDeclarationList = compilationUnit.findAll(ClassOrInterfaceDeclaration.class);
+        for (ClassOrInterfaceDeclaration classOrInterfaceDeclaration : classOrInterfaceDeclarationList) {
+            if (!Objects.equals(getQualifiedName(packageName, classOrInterfaceDeclaration.getNameAsString()), className)) {
+                continue;
+            }
+            List<FieldDeclaration> fieldDeclarationList = classOrInterfaceDeclaration.findAll(FieldDeclaration.class);
+            for (FieldDeclaration fieldDeclaration : fieldDeclarationList) {
+                NodeList<VariableDeclarator> variableDeclaratorNodeList = fieldDeclaration.getVariables();
+                for (VariableDeclarator variableDeclarator : variableDeclaratorNodeList) {
+                    SimpleName simpleName = variableDeclarator.getName();
+                    if (Objects.equals(simpleName.asString(), fieldName)) {
+                        return fieldDeclaration.getJavadocComment()
+                                .map(JavadocComment::parse)
+                                .orElse(null);
                     }
                 }
             }
-            return null;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
         }
+        // 枚举
+        List<EnumDeclaration> enumDeclarationList = compilationUnit.findAll(EnumDeclaration.class);
+        for (EnumDeclaration enumDeclaration : enumDeclarationList) {
+            if (!Objects.equals(getQualifiedName(packageName, enumDeclaration.getNameAsString()), className)) {
+                continue;
+            }
+            List<EnumConstantDeclaration> enumConstantDeclarationList = enumDeclaration.findAll(EnumConstantDeclaration.class);
+            for (EnumConstantDeclaration enumConstantDeclaration : enumConstantDeclarationList) {
+                if (Objects.equals(enumConstantDeclaration.getNameAsString(), fieldName)) {
+                    return enumConstantDeclaration.getJavadocComment()
+                            .map(JavadocComment::parse)
+                            .orElse(null);
+                }
+            }
+        }
+        return null;
     }
 
     /**

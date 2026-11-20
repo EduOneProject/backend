@@ -16,6 +16,7 @@ import io.github.summerain0.gqldoc.parser.java.bean.ModuleArtifactInfo;
 import io.github.summerain0.gqldoc.parser.java.consts.ClassNameConstants;
 import io.github.summerain0.gqldoc.parser.java.util.ClassUtils;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.File;
@@ -29,6 +30,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.OffsetDateTime;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -88,6 +91,16 @@ public class JavaSchemaGenerator {
             int.class, long.class, float.class, double.class, boolean.class,
             String.class, Date.class, OffsetDateTime.class
     };
+
+    /**
+     * 用于匹配@see注释中的类引用的正则表达式
+     */
+    private static final Pattern SEE_TAG_CLASS_REFERENCE_PATTERN = Pattern.compile("[A-Za-z_$][\\w$]*(?:\\.[A-Za-z_$][\\w$]*)*");
+
+    /**
+     * 用于匹配Javadoc内联标签的正则表达式
+     */
+    private static final Pattern JAVADOC_INLINE_TAG_PATTERN = Pattern.compile("\\{@[^}]*}");
 
     /**
      * 构造函数
@@ -186,6 +199,9 @@ public class JavaSchemaGenerator {
                 OperationField operationField = OperationField.builder()
                         .name(method.getName())
                         .description(javaSourceCodeResolver.getMethodComment(qualifiedClassName, method.getName()))
+                        .seeTags(resolveSeeTags(
+                                qualifiedClassName,
+                                javaSourceCodeResolver.getMethodSeeTags(qualifiedClassName, method.getName())))
                         .returnType(returnTypeRef)
                         .returnDescription(javaSourceCodeResolver.getMethodReturnComment(qualifiedClassName, method.getName()))
                         .arguments(argumentDefList)
@@ -280,7 +296,10 @@ public class JavaSchemaGenerator {
                     for (Object constant : enumConstants) {
                         FieldDef fieldDef = FieldDef.builder()
                                 .name(constant.toString())
-                                .description(javaSourceCodeResolver.getFieldComment(typeClass.getName(), constant.toString()))
+                                .description(buildDescription(
+                                        javaSourceCodeResolver.getFieldComment(typeClass.getName(), constant.toString()),
+                                        typeClass.getName(),
+                                        javaSourceCodeResolver.getFieldSeeTags(typeClass.getName(), constant.toString())))
                                 .build();
                         fields.add(fieldDef);
                     }
@@ -299,7 +318,10 @@ public class JavaSchemaGenerator {
                             TypeRef typeRef = resolveType(genericType, isReturnType);
                             FieldDef fieldDef = FieldDef.builder()
                                     .name(declaredField.getName())
-                                    .description(javaSourceCodeResolver.getFieldComment(typeClass.getName(), declaredField.getName()))
+                                    .description(buildDescription(
+                                            javaSourceCodeResolver.getFieldComment(typeClass.getName(), declaredField.getName()),
+                                            typeClass.getName(),
+                                            javaSourceCodeResolver.getFieldSeeTags(typeClass.getName(), declaredField.getName())))
                                     .type(typeRef)
                                     .build();
                             fieldFieldDefList.add(fieldDef);
@@ -308,7 +330,10 @@ public class JavaSchemaGenerator {
                     }
                 }
 
-                typeDefContext.setDescription(javaSourceCodeResolver.getClassComment(typeClass.getName()));
+                typeDefContext.setDescription(buildDescription(
+                        javaSourceCodeResolver.getClassComment(typeClass.getName()),
+                        typeClass.getName(),
+                        javaSourceCodeResolver.getClassSeeTags(typeClass.getName())));
                 typeDef = extensionRegistry.transformDef(type.getTypeName(), typeDefContext);
                 cacheTypeDefMap.put(Pair.of(typeDef.getName(), typeDef.getKind()), typeDef);
                 TypeRef typeRef = extensionRegistry.transformRef(type.getTypeName(), null);
@@ -465,6 +490,174 @@ public class JavaSchemaGenerator {
                     String annotationTypeName = annotation.annotationType().getName();
                     return Objects.equals(annotationTypeName, ClassNameConstants.ARGUMENT_QUALIFIED);
                 });
+    }
+
+    /**
+     * 构建描述
+     * <p>将@see注释追加到描述末尾，其中可解析的类引用会替换为GraphQL类型名称，并作为类型输出到Schema中</p>
+     *
+     * @param description    原始描述
+     * @param ownerClassName 描述所属类的全限定名
+     * @param seeTagList     @see注释列表
+     * @return 构建后的描述
+     */
+    private String buildDescription(String description, String ownerClassName, List<String> seeTagList) {
+        List<String> resolvedSeeTagList = resolveSeeTags(ownerClassName, seeTagList);
+        if (resolvedSeeTagList.isEmpty()) {
+            return description;
+        }
+        StringBuilder descriptionBuilder = new StringBuilder();
+        if (StringUtils.isNotBlank(description)) {
+            descriptionBuilder.append(description.strip());
+            descriptionBuilder.append("\n\n");
+        }
+        descriptionBuilder.append(resolvedSeeTagList.stream()
+                .map(seeTag -> "@see " + seeTag)
+                .collect(Collectors.joining("\n")));
+        return descriptionBuilder.toString();
+    }
+
+    /**
+     * 解析@see注释列表
+     *
+     * @param ownerClassName 描述所属类的全限定名
+     * @param seeTagList     @see注释列表
+     * @return 解析后的@see注释列表
+     */
+    private List<String> resolveSeeTags(String ownerClassName, List<String> seeTagList) {
+        if (CollectionUtils.isEmpty(seeTagList)) {
+            return Collections.emptyList();
+        }
+        List<String> resolvedSeeTagList = new ArrayList<>();
+        for (String seeTag : seeTagList) {
+            if (StringUtils.isBlank(seeTag)) {
+                continue;
+            }
+            resolvedSeeTagList.add(resolveSeeTag(ownerClassName, seeTag.strip()));
+        }
+        return resolvedSeeTagList;
+    }
+
+    /**
+     * 解析@see注释
+     * <p>仅替换可解析为GraphQL类型的类引用，其余内容原样输出；Javadoc内联标签不处理</p>
+     *
+     * @param ownerClassName 描述所属类的全限定名
+     * @param seeTag         @see注释内容
+     * @return 解析后的@see注释内容
+     */
+    private String resolveSeeTag(String ownerClassName, String seeTag) {
+        List<int[]> inlineTagRangeList = new ArrayList<>();
+        Matcher inlineTagMatcher = JAVADOC_INLINE_TAG_PATTERN.matcher(seeTag);
+        while (inlineTagMatcher.find()) {
+            inlineTagRangeList.add(new int[]{inlineTagMatcher.start(), inlineTagMatcher.end()});
+        }
+
+        Matcher classReferenceMatcher = SEE_TAG_CLASS_REFERENCE_PATTERN.matcher(seeTag);
+        StringBuilder seeTagBuilder = new StringBuilder();
+        int lastEnd = 0;
+        while (classReferenceMatcher.find()) {
+            seeTagBuilder.append(seeTag, lastEnd, classReferenceMatcher.start());
+            String classReference = classReferenceMatcher.group();
+            String replacement = classReference;
+            if (!isInsideRange(classReferenceMatcher.start(), inlineTagRangeList)) {
+                String resolvedTypeName = resolveSeeTagTypeName(ownerClassName, classReference);
+                if (resolvedTypeName != null) {
+                    replacement = resolvedTypeName;
+                }
+            }
+            seeTagBuilder.append(replacement);
+            lastEnd = classReferenceMatcher.end();
+        }
+        seeTagBuilder.append(seeTag.substring(lastEnd));
+        return seeTagBuilder.toString();
+    }
+
+    /**
+     * 是否位于指定区间内
+     *
+     * @param index     下标
+     * @param rangeList 区间列表
+     * @return 是否位于区间内
+     */
+    private boolean isInsideRange(int index, List<int[]> rangeList) {
+        for (int[] range : rangeList) {
+            if (index >= range[0] && index < range[1]) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 解析@see注释中的类引用为GraphQL类型名称
+     * <p>无法在项目源码中找到对应类或无法映射为GraphQL类型时返回null，按普通文本注释处理</p>
+     *
+     * @param ownerClassName 描述所属类的全限定名
+     * @param classReference 类引用
+     * @return GraphQL类型名称
+     */
+    private String resolveSeeTagTypeName(String ownerClassName, String classReference) {
+        String lastSegment = classReference.contains(".")
+                ? StringUtils.substringAfterLast(classReference, ".")
+                : classReference;
+        if (StringUtils.isBlank(lastSegment) || !Character.isUpperCase(lastSegment.charAt(0))) {
+            return null;
+        }
+        for (String qualifiedClassName : javaSourceCodeResolver.resolveClassReferenceCandidates(ownerClassName, classReference)) {
+            if (!javaSourceCodeResolver.containsClass(qualifiedClassName)) {
+                continue;
+            }
+            Class<?> clazz;
+            try {
+                clazz = Class.forName(qualifiedClassName, false, classLoader);
+            } catch (ClassNotFoundException | LinkageError e) {
+                continue;
+            }
+            if (!isSeeTagTypeClass(clazz)) {
+                continue;
+            }
+            try {
+                TypeRef typeRef = resolveType(clazz, true);
+                if (typeRef != null && StringUtils.isNotBlank(typeRef.getName())) {
+                    return typeRef.getName();
+                }
+            } catch (RuntimeException ignored) {
+                // 无法映射为GraphQL类型，按普通文本注释处理
+            }
+            return null;
+        }
+        return null;
+    }
+
+    /**
+     * 是否是可以作为类型输出到Schema的类
+     *
+     * @param clazz 类
+     * @return 是否可以作为类型输出
+     */
+    private boolean isSeeTagTypeClass(Class<?> clazz) {
+        if (clazz.isPrimitive() || clazz.isArray() || clazz.isInterface() || clazz == Object.class) {
+            return false;
+        }
+        if (clazz.getEnclosingClass() != null) {
+            return false;
+        }
+        if (Collection.class.isAssignableFrom(clazz) || Map.class.isAssignableFrom(clazz)) {
+            return false;
+        }
+        if (clazz.getTypeParameters().length > 0) {
+            return false;
+        }
+        if (clazz.isEnum()) {
+            Object[] enumConstants = clazz.getEnumConstants();
+            return enumConstants != null && enumConstants.length > 0;
+        }
+        if (isIgnoreFieldClass(clazz)) {
+            return true;
+        }
+        return Arrays.stream(clazz.getDeclaredFields())
+                .anyMatch(field -> !field.isSynthetic() && !Modifier.isStatic(field.getModifiers()));
     }
 
     /**
