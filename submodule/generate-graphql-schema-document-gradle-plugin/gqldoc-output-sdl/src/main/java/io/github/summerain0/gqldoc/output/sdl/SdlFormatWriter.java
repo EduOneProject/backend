@@ -1,6 +1,7 @@
 package io.github.summerain0.gqldoc.output.sdl;
 
 import io.github.summerain0.gqldoc.core.enums.TypeKind;
+import io.github.summerain0.gqldoc.core.extension.ExtensionRegistry;
 import io.github.summerain0.gqldoc.core.ir.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -96,8 +97,15 @@ public class SdlFormatWriter {
         if (hasMutationField) {
             content.append("type Mutation\n");
         }
-        content.append("directive @page(for: String!) on FIELD_DEFINITION\n");
-        content.append("directive @commonBusinessResponse(for: String!) on FIELD_DEFINITION\n");
+        // 指令定义（仅输出已注册扩展提供的指令）
+        List<DirectiveDef> directiveDefList = ExtensionRegistry.getInstance().getDirectiveDefs();
+        if (CollectionUtils.isNotEmpty(directiveDefList)) {
+            String directiveContent = directiveDefList.stream()
+                    .sorted(Comparator.comparing(DirectiveDef::getName))
+                    .map(SdlFormatWriter::buildDirectiveDefinition)
+                    .collect(Collectors.joining("\n"));
+            content.append(directiveContent).append("\n");
+        }
 
         // 解析类型
         if (CollectionUtils.isEmpty(typeDefList)) {
@@ -177,6 +185,27 @@ public class SdlFormatWriter {
         }
         content.append(String.join("\n\n", typeDefContent));
 
+        return content.toString();
+    }
+
+    /**
+     * 构建指令定义内容
+     *
+     * @param directiveDef 指令定义
+     * @return 指令定义内容
+     */
+    private static String buildDirectiveDefinition(DirectiveDef directiveDef) {
+        StringBuilder content = new StringBuilder();
+        content.append("directive @").append(directiveDef.getName());
+        if (CollectionUtils.isNotEmpty(directiveDef.getArguments())) {
+            String argument = directiveDef.getArguments().stream()
+                    .map(ArgumentDef::toString)
+                    .collect(Collectors.joining(", "));
+            content.append("(").append(argument).append(")");
+        }
+        if (CollectionUtils.isNotEmpty(directiveDef.getLocations())) {
+            content.append(" on ").append(String.join(" | ", directiveDef.getLocations()));
+        }
         return content.toString();
     }
 

@@ -1,5 +1,8 @@
 package io.github.summerain0.gqldoc.extension.eduone;
 
+import io.github.summerain0.gqldoc.core.enums.TypeKind;
+import io.github.summerain0.gqldoc.core.ir.ArgumentDef;
+import io.github.summerain0.gqldoc.core.ir.DirectiveDef;
 import io.github.summerain0.gqldoc.core.ir.DirectiveRef;
 import io.github.summerain0.gqldoc.core.ir.TypeRef;
 import io.github.summerain0.gqldoc.core.resolver.TypeMappingRule;
@@ -73,6 +76,31 @@ public class EduOneTypeMappingProvider implements TypeMappingProvider {
                                     .build();
                         }
                 )
+        );
+    }
+
+    @Override
+    public List<DirectiveDef> provideDirectiveDefs() {
+        TypeRef stringTypeRef = TypeRef.builder()
+                .name("String")
+                .kind(TypeKind.SCALAR)
+                .nonNullable(true)
+                .build();
+        ArgumentDef forArgumentDef = ArgumentDef.builder()
+                .name("for")
+                .type(stringTypeRef)
+                .build();
+        return List.of(
+                DirectiveDef.builder()
+                        .name("page")
+                        .arguments(List.of(forArgumentDef))
+                        .locations(List.of("FIELD_DEFINITION"))
+                        .build(),
+                DirectiveDef.builder()
+                        .name("commonBusinessResponse")
+                        .arguments(List.of(forArgumentDef))
+                        .locations(List.of("FIELD_DEFINITION"))
+                        .build()
         );
     }
 }

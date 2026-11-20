@@ -1,5 +1,6 @@
 package io.github.summerain0.gqldoc.core.extension;
 
+import io.github.summerain0.gqldoc.core.ir.DirectiveDef;
 import io.github.summerain0.gqldoc.core.ir.TypeDef;
 import io.github.summerain0.gqldoc.core.ir.TypeRef;
 import io.github.summerain0.gqldoc.core.resolver.TypeDefContext;
@@ -20,6 +21,12 @@ public class ExtensionRegistry {
      * 类型映射规则
      */
     private final List<TypeMappingRule> rules = new ArrayList<>();
+
+    /**
+     * 指令定义
+     * <p>kv定义：指令名称 -> 指令定义</p>
+     */
+    private final Map<String, DirectiveDef> directiveDefMap = new LinkedHashMap<>();
 
     /**
      * 注册类型映射规则
@@ -44,6 +51,40 @@ public class ExtensionRegistry {
             return;
         }
         registerAll(typeMappingProvider.provideRules());
+        registerDirectives(typeMappingProvider.provideDirectiveDefs());
+    }
+
+    /**
+     * 注册指令定义
+     *
+     * @param directiveDef 指令定义
+     */
+    public void register(DirectiveDef directiveDef) {
+        if (directiveDef == null) {
+            return;
+        }
+        directiveDefMap.put(directiveDef.getName(), directiveDef);
+    }
+
+    /**
+     * 注册指令定义
+     *
+     * @param directiveDefs 指令定义
+     */
+    public void registerDirectives(Collection<DirectiveDef> directiveDefs) {
+        if (directiveDefs == null) {
+            return;
+        }
+        directiveDefs.forEach(this::register);
+    }
+
+    /**
+     * 获取已注册的指令定义
+     *
+     * @return 指令定义列表
+     */
+    public List<DirectiveDef> getDirectiveDefs() {
+        return List.copyOf(directiveDefMap.values());
     }
 
     /**

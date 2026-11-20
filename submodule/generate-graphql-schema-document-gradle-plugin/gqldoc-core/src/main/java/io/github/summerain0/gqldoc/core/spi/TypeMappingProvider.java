@@ -1,5 +1,6 @@
 package io.github.summerain0.gqldoc.core.spi;
 
+import io.github.summerain0.gqldoc.core.ir.DirectiveDef;
 import io.github.summerain0.gqldoc.core.resolver.TypeMappingRule;
 
 import java.util.List;
@@ -19,4 +20,11 @@ public interface TypeMappingProvider {
      * 提供类型映射规则
      */
     List<TypeMappingRule> provideRules();
+
+    /**
+     * 提供指令定义
+     */
+    default List<DirectiveDef> provideDirectiveDefs() {
+        return List.of();
+    }
 }
