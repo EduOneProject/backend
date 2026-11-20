@@ -1,6 +1,9 @@
 package io.github.summerain0.gqldoc.parser.java;
 
 import io.github.summerain0.gqldoc.core.enums.TypeKind;
+import io.github.summerain0.gqldoc.core.ir.ArgumentDef;
+import io.github.summerain0.gqldoc.core.ir.DirectiveDef;
+import io.github.summerain0.gqldoc.core.ir.DirectiveRef;
 import io.github.summerain0.gqldoc.core.ir.TypeDef;
 import io.github.summerain0.gqldoc.core.ir.TypeRef;
 import io.github.summerain0.gqldoc.core.resolver.TypeMappingRule;
@@ -8,6 +11,7 @@ import io.github.summerain0.gqldoc.core.spi.TypeMappingProvider;
 import io.github.summerain0.gqldoc.parser.java.util.ClassUtils;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Java类型转换规则提供者
@@ -15,6 +19,16 @@ import java.util.List;
  * @author summerain0
  */
 public class JavaTypeMappingProvider implements TypeMappingProvider {
+    /**
+     * 类型指令名称
+     */
+    private static final String TYPE_DIRECTIVE_NAME = "type";
+
+    /**
+     * 类型指令参数名称
+     */
+    private static final String TYPE_DIRECTIVE_ARGUMENT_NAME = "value";
+
     /**
      * 全局优先级
      */
@@ -59,11 +73,16 @@ public class JavaTypeMappingProvider implements TypeMappingProvider {
                         Integer.MIN_VALUE,
                         (qualifiedName, context) -> {
                             String simpleName = ClassUtils.getSimpleName(qualifiedName);
+                            DirectiveRef typeDirectiveRef = DirectiveRef.builder()
+                                    .name(TYPE_DIRECTIVE_NAME)
+                                    .arguments(Map.of(TYPE_DIRECTIVE_ARGUMENT_NAME, qualifiedName))
+                                    .build();
                             return TypeDef.builder()
                                     .name(simpleName)
                                     .description(context.getDescription())
                                     .kind(context.getTypeKind())
                                     .fields(context.getFieldDefList())
+                                    .directives(List.of(typeDirectiveRef))
                                     .build();
                         },
                         (qualifiedName, genericArgs) -> {
@@ -73,6 +92,26 @@ public class JavaTypeMappingProvider implements TypeMappingProvider {
                                     .build();
                         }
                 )
+        );
+    }
+
+    @Override
+    public List<DirectiveDef> provideDirectiveDefs() {
+        TypeRef stringTypeRef = TypeRef.builder()
+                .name("String")
+                .kind(TypeKind.SCALAR)
+                .nonNullable(true)
+                .build();
+        ArgumentDef valueArgumentDef = ArgumentDef.builder()
+                .name(TYPE_DIRECTIVE_ARGUMENT_NAME)
+                .type(stringTypeRef)
+                .build();
+        return List.of(
+                DirectiveDef.builder()
+                        .name(TYPE_DIRECTIVE_NAME)
+                        .arguments(List.of(valueArgumentDef))
+                        .locations(List.of("OBJECT", "INPUT_OBJECT", "ENUM"))
+                        .build()
         );
     }
 }

@@ -126,7 +126,7 @@ public class SdlFormatWriter {
             } else if (kind == TypeKind.OBJECT) {
                 StringBuilder defContent = new StringBuilder();
                 appendDescription(defContent, "", typeDef.getDescription());
-                defContent.append("type ").append(typeDef.getName()).append(" {\n");
+                defContent.append("type ").append(typeDef.getName()).append(buildTypeDirectives(typeDef.getDirectives())).append(" {\n");
                 List<FieldDef> fieldDefList = typeDef.getFields();
                 if (CollectionUtils.isEmpty(fieldDefList)) {
                     throw new RuntimeException("类型定义字段为空：" + typeDef);
@@ -140,7 +140,7 @@ public class SdlFormatWriter {
             } else if (kind == TypeKind.INPUT) {
                 StringBuilder defContent = new StringBuilder();
                 appendDescription(defContent, "", typeDef.getDescription());
-                defContent.append("input ").append(typeDef.getName()).append(" {\n");
+                defContent.append("input ").append(typeDef.getName()).append(buildTypeDirectives(typeDef.getDirectives())).append(" {\n");
                 List<FieldDef> fieldDefList = typeDef.getFields();
                 if (CollectionUtils.isEmpty(fieldDefList)) {
                     throw new RuntimeException("类型定义字段为空：" + typeDef);
@@ -154,7 +154,7 @@ public class SdlFormatWriter {
             } else if (kind == TypeKind.ENUM) {
                 StringBuilder defContent = new StringBuilder();
                 appendDescription(defContent, "", typeDef.getDescription());
-                defContent.append("enum ").append(typeDef.getName()).append(" {\n");
+                defContent.append("enum ").append(typeDef.getName()).append(buildTypeDirectives(typeDef.getDirectives())).append(" {\n");
                 List<FieldDef> fieldDefList = typeDef.getFields();
                 if (CollectionUtils.isEmpty(fieldDefList)) {
                     throw new RuntimeException("类型定义字段为空：" + typeDef);
@@ -207,6 +207,23 @@ public class SdlFormatWriter {
             content.append(" on ").append(String.join(" | ", directiveDef.getLocations()));
         }
         return content.toString();
+    }
+
+    /**
+     * 构建类型定义指令内容
+     * <p>指令追加在类型名称之后，无指令时返回空字符串</p>
+     *
+     * @param directives 指令列表
+     * @return 指令内容
+     */
+    private static String buildTypeDirectives(List<DirectiveRef> directives) {
+        if (CollectionUtils.isEmpty(directives)) {
+            return "";
+        }
+        String directiveContent = directives.stream()
+                .map(DirectiveRef::toString)
+                .collect(Collectors.joining(" "));
+        return " " + directiveContent;
     }
 
     /**
