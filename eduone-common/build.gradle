@@ -3,4 +3,5 @@ description = "项目通用模块"
 dependencies {
     implementation(libs.springContext)
     implementation(libs.commonsLang3)
+    implementation(libs.jacksonDatabind)
 }

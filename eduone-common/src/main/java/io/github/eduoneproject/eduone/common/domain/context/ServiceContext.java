@@ -1,7 +1,9 @@
 package io.github.eduoneproject.eduone.common.domain.context;
 
+import io.github.eduoneproject.eduone.common.util.SpringUtils;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
+import tools.jackson.databind.ObjectMapper;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -41,5 +43,21 @@ public class ServiceContext implements Serializable {
             return userIdentity.getUserId();
         }
         return null;
+    }
+
+    /**
+     * 当前服务上下文转换为json字符串
+     */
+    public String toJson() {
+        ObjectMapper objectMapper = SpringUtils.getBean(ObjectMapper.class);
+        return objectMapper.writeValueAsString(this);
+    }
+
+    /**
+     * 从json字符串转换为服务上下文
+     */
+    public static ServiceContext fromJson(String json) {
+        ObjectMapper objectMapper = SpringUtils.getBean(ObjectMapper.class);
+        return objectMapper.readValue(json, ServiceContext.class);
     }
 }
