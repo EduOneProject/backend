@@ -2,6 +2,7 @@ type Query
 type Mutation
 directive @commonBusinessResponse(for: String!) on FIELD_DEFINITION
 directive @page(for: String!) on FIELD_DEFINITION
+directive @type(value: String!) on OBJECT | INPUT_OBJECT | ENUM
 scalar Boolean
 scalar DateTime
 scalar Int
@@ -9,7 +10,7 @@ scalar Long
 scalar String
 
 """业务字典信息响应体"""
-type BusinessDictionaryResponse {
+type BusinessDictionaryResponse @type(value: "io.github.eduoneproject.eduone.query.gateway.response.dictionary.BusinessDictionaryResponse") {
     """字典ID"""
     id: String
     """字典类型"""
@@ -35,7 +36,7 @@ type BusinessDictionaryResponse {
 }
 
 """业务字典类型信息响应体"""
-type BusinessDictionaryTypeResponse {
+type BusinessDictionaryTypeResponse @type(value: "io.github.eduoneproject.eduone.query.gateway.response.dictionary.BusinessDictionaryTypeResponse") {
     """字典类型"""
     type: String
     """字典类型名称"""
@@ -53,7 +54,7 @@ type BusinessDictionaryTypeResponse {
 }
 
 """图形验证码响应内容"""
-type ImageCaptchaResponse {
+type ImageCaptchaResponse @type(value: "io.github.eduoneproject.eduone.business.gateway.response.ImageCaptchaResponse") {
     """经过base64编码后的验证码图片"""
     imageBase64: String
     """业务Token"""
@@ -61,7 +62,7 @@ type ImageCaptchaResponse {
 }
 
 """地区树查询响应"""
-type RegionTreeResponse {
+type RegionTreeResponse @type(value: "io.github.eduoneproject.eduone.query.gateway.response.RegionTreeResponse") {
     """地区ID"""
     id: String
     """地区编码"""
@@ -83,7 +84,7 @@ type RegionTreeResponse {
 }
 
 """轮换令牌响应"""
-type RotateAccessTokenResponse {
+type RotateAccessTokenResponse @type(value: "io.github.eduoneproject.eduone.business.gateway.response.RotateAccessTokenResponse") {
     """访问令牌"""
     accessToken: String
     """刷新令牌"""
@@ -91,7 +92,7 @@ type RotateAccessTokenResponse {
 }
 
 """用户登录成功响应体"""
-type UserLoginSuccessResponse {
+type UserLoginSuccessResponse @type(value: "io.github.eduoneproject.eduone.business.gateway.response.UserLoginSuccessResponse") {
     """用户ID"""
     userId: String
     """访问令牌"""
@@ -101,7 +102,7 @@ type UserLoginSuccessResponse {
 }
 
 """获取验证码请求体"""
-input ApplyImageCaptchaRequest {
+input ApplyImageCaptchaRequest @type(value: "io.github.eduoneproject.eduone.business.gateway.request.ApplyImageCaptchaRequest") {
     """验证场景"""
     verificationScene: String
     """验证上下文token"""
@@ -109,7 +110,7 @@ input ApplyImageCaptchaRequest {
 }
 
 """业务字典查询条件请求体"""
-input BusinessDictionaryRequest {
+input BusinessDictionaryRequest @type(value: "io.github.eduoneproject.eduone.query.gateway.request.dictionary.BusinessDictionaryRequest") {
     """字典ID集合"""
     idList: [String]
     """字典类型"""
@@ -121,7 +122,7 @@ input BusinessDictionaryRequest {
 }
 
 """业务字典排序条件请求体"""
-input BusinessDictionarySortRequest {
+input BusinessDictionarySortRequest @type(value: "io.github.eduoneproject.eduone.query.gateway.request.dictionary.BusinessDictionarySortRequest") {
     """排序字段"""
     field: BusinessDictionarySortField
     """排序方向"""
@@ -129,13 +130,13 @@ input BusinessDictionarySortRequest {
 }
 
 """业务字典类型查询条件请求体"""
-input BusinessDictionaryTypeRequest {
+input BusinessDictionaryTypeRequest @type(value: "io.github.eduoneproject.eduone.query.gateway.request.dictionary.BusinessDictionaryTypeRequest") {
     """字典类型名称"""
     name: String
 }
 
 """业务字典类型排序条件请求体"""
-input BusinessDictionaryTypeSortRequest {
+input BusinessDictionaryTypeSortRequest @type(value: "io.github.eduoneproject.eduone.query.gateway.request.dictionary.BusinessDictionaryTypeSortRequest") {
     """排序字段"""
     field: BusinessDictionaryTypeSortField
     """排序方向"""
@@ -143,7 +144,7 @@ input BusinessDictionaryTypeSortRequest {
 }
 
 """验证图形验证码请求体"""
-input ImageCaptchaValidRequest {
+input ImageCaptchaValidRequest @type(value: "io.github.eduoneproject.eduone.business.gateway.request.ImageCaptchaValidRequest") {
     """验证场景"""
     verificationScene: String
     """校验上下文token"""
@@ -153,7 +154,7 @@ input ImageCaptchaValidRequest {
 }
 
 """以密码登录请求体"""
-input LoginWithPasswordRequest {
+input LoginWithPasswordRequest @type(value: "io.github.eduoneproject.eduone.business.gateway.request.LoginWithPasswordRequest") {
     """账号"""
     account: String
     """密码"""
@@ -163,7 +164,7 @@ input LoginWithPasswordRequest {
 }
 
 """分页请求条件"""
-input PageRequest {
+input PageRequest @type(value: "io.github.eduoneproject.eduone.query.gateway.request.PageRequest") {
     """当前页码"""
     pageNo: Long
     """每页数量"""
@@ -171,7 +172,7 @@ input PageRequest {
 }
 
 """地区树查询条件"""
-input RegionTreeQueryRequest {
+input RegionTreeQueryRequest @type(value: "io.github.eduoneproject.eduone.query.gateway.request.RegionTreeQueryRequest") {
     """上级地区ID，-1表示顶级"""
     parentIdList: [String]
     """上级地区编码，-1表示顶级"""
@@ -185,7 +186,7 @@ input RegionTreeQueryRequest {
 }
 
 """业务字典排序字段枚举"""
-enum BusinessDictionarySortField {
+enum BusinessDictionarySortField @type(value: "io.github.eduoneproject.eduone.query.kernel.repository.dictionary.enums.BusinessDictionarySortField") {
     """排序"""
     SORT
     """创建时间"""
@@ -193,13 +194,13 @@ enum BusinessDictionarySortField {
 }
 
 """业务字典类型排序字段枚举"""
-enum BusinessDictionaryTypeSortField {
+enum BusinessDictionaryTypeSortField @type(value: "io.github.eduoneproject.eduone.query.kernel.repository.dictionary.enums.BusinessDictionaryTypeSortField") {
     """创建时间"""
     CREATE_TIME
 }
 
 """排序方向枚举"""
-enum OrderDirection {
+enum OrderDirection @type(value: "io.github.eduoneproject.eduone.query.common.domain.enums.OrderDirection") {
     """升序"""
     ASC
     """降序"""
