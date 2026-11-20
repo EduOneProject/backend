@@ -60,6 +60,18 @@ public class JavaSchemaGenerator {
     private Map<Pair<String, TypeKind>, TypeDef> cacheTypeDefMap = new HashMap<>();
 
     /**
+     * 已解析完成的类型引用缓存
+     * <p>kv定义：&lt;Java类全限定名, TypeKind> -> TypeRef</p>
+     */
+    private Map<Pair<String, TypeKind>, TypeRef> resolvedTypeRefMap = new HashMap<>();
+
+    /**
+     * 正在解析中的类型
+     * <p>用于处理自嵌套或循环引用，避免无限递归导致栈溢出</p>
+     */
+    private Set<Pair<String, TypeKind>> resolvingTypeSet = new HashSet<>();
+
+    /**
      * Java源码解析器
      */
     private final JavaSourceCodeResolver javaSourceCodeResolver;
@@ -128,6 +140,8 @@ public class JavaSchemaGenerator {
         List<SchemaIR> schemaIRList = new ArrayList<>();
         for (String qualifiedClassName : controllerQualifiedClassNameList) {
             cacheTypeDefMap = new HashMap<>();
+            resolvedTypeRefMap = new HashMap<>();
+            resolvingTypeSet = new HashSet<>();
 
             SchemaIR.SchemaIRBuilder schemaIRBuilder = SchemaIR.builder()
                     .schemaName(ClassUtils.getSimpleName(qualifiedClassName));
@@ -238,50 +252,71 @@ public class JavaSchemaGenerator {
                 return null;
             }
 
-            TypeDef typeDef;
+            TypeKind typeKind = typeClass.isEnum() ? TypeKind.ENUM : (isReturnType ? TypeKind.OBJECT : TypeKind.INPUT);
+            Pair<String, TypeKind> typeRefCacheKey = Pair.of(typeClass.getName(), typeKind);
 
-            // 类型定义模型上下文
-            TypeDefContext typeDefContext = new TypeDefContext();
-
-            if (typeClass.isEnum()) { // 枚举
-                typeDefContext.setTypeKind(TypeKind.ENUM);
-                List<FieldDef> fields = new ArrayList<>();
-                Object[] enumConstants = typeClass.getEnumConstants();
-                for (Object constant : enumConstants) {
-                    FieldDef fieldDef = FieldDef.builder()
-                            .name(constant.toString())
-                            .description(javaSourceCodeResolver.getFieldComment(typeClass.getName(), constant.toString()))
-                            .build();
-                    fields.add(fieldDef);
-                }
-                typeDefContext.setFieldDefList(fields);
-            } else { // 普通对象
-                typeDefContext.setTypeKind(isReturnType ? TypeKind.OBJECT : TypeKind.INPUT);
-
-                if (!isIgnoreFieldClass(typeClass)) {
-                    Field[] declaredFields = typeClass.getDeclaredFields();
-                    List<FieldDef> fieldFieldDefList = new ArrayList<>();
-                    for (Field declaredField : declaredFields) {
-                        if (declaredField.isSynthetic() || Modifier.isStatic(declaredField.getModifiers())) {
-                            continue;
-                        }
-                        Type genericType = declaredField.getGenericType();
-                        TypeRef typeRef = resolveType(genericType, isReturnType);
-                        FieldDef fieldDef = FieldDef.builder()
-                                .name(declaredField.getName())
-                                .description(javaSourceCodeResolver.getFieldComment(typeClass.getName(), declaredField.getName()))
-                                .type(typeRef)
-                                .build();
-                        fieldFieldDefList.add(fieldDef);
-                    }
-                    typeDefContext.setFieldDefList(fieldFieldDefList);
-                }
+            // 已解析完成，直接复用类型引用
+            TypeRef resolvedTypeRef = resolvedTypeRefMap.get(typeRefCacheKey);
+            if (resolvedTypeRef != null) {
+                return resolvedTypeRef;
             }
 
-            typeDefContext.setDescription(javaSourceCodeResolver.getClassComment(typeClass.getName()));
-            typeDef = extensionRegistry.transformDef(type.getTypeName(), typeDefContext);
-            cacheTypeDefMap.put(Pair.of(typeDef.getName(), typeDef.getKind()), typeDef);
-            return extensionRegistry.transformRef(type.getTypeName(), null);
+            // 自嵌套或循环引用：该类型正在解析中，先返回引用，待外层解析完成后注册类型定义
+            if (resolvingTypeSet.contains(typeRefCacheKey)) {
+                return extensionRegistry.transformRef(type.getTypeName(), null);
+            }
+
+            resolvingTypeSet.add(typeRefCacheKey);
+            try {
+                TypeDef typeDef;
+
+                // 类型定义模型上下文
+                TypeDefContext typeDefContext = new TypeDefContext();
+
+                if (typeClass.isEnum()) { // 枚举
+                    typeDefContext.setTypeKind(TypeKind.ENUM);
+                    List<FieldDef> fields = new ArrayList<>();
+                    Object[] enumConstants = typeClass.getEnumConstants();
+                    for (Object constant : enumConstants) {
+                        FieldDef fieldDef = FieldDef.builder()
+                                .name(constant.toString())
+                                .description(javaSourceCodeResolver.getFieldComment(typeClass.getName(), constant.toString()))
+                                .build();
+                        fields.add(fieldDef);
+                    }
+                    typeDefContext.setFieldDefList(fields);
+                } else { // 普通对象
+                    typeDefContext.setTypeKind(typeKind);
+
+                    if (!isIgnoreFieldClass(typeClass)) {
+                        Field[] declaredFields = typeClass.getDeclaredFields();
+                        List<FieldDef> fieldFieldDefList = new ArrayList<>();
+                        for (Field declaredField : declaredFields) {
+                            if (declaredField.isSynthetic() || Modifier.isStatic(declaredField.getModifiers())) {
+                                continue;
+                            }
+                            Type genericType = declaredField.getGenericType();
+                            TypeRef typeRef = resolveType(genericType, isReturnType);
+                            FieldDef fieldDef = FieldDef.builder()
+                                    .name(declaredField.getName())
+                                    .description(javaSourceCodeResolver.getFieldComment(typeClass.getName(), declaredField.getName()))
+                                    .type(typeRef)
+                                    .build();
+                            fieldFieldDefList.add(fieldDef);
+                        }
+                        typeDefContext.setFieldDefList(fieldFieldDefList);
+                    }
+                }
+
+                typeDefContext.setDescription(javaSourceCodeResolver.getClassComment(typeClass.getName()));
+                typeDef = extensionRegistry.transformDef(type.getTypeName(), typeDefContext);
+                cacheTypeDefMap.put(Pair.of(typeDef.getName(), typeDef.getKind()), typeDef);
+                TypeRef typeRef = extensionRegistry.transformRef(type.getTypeName(), null);
+                resolvedTypeRefMap.put(typeRefCacheKey, typeRef);
+                return typeRef;
+            } finally {
+                resolvingTypeSet.remove(typeRefCacheKey);
+            }
         }
         throw new RuntimeException("不支持的类型：" + type.getTypeName());
     }
