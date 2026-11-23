@@ -9,7 +9,7 @@ apacheCommonsCodec = "1.22.1"
 graphqlJavaExtendedScalars = "24.0"
 jsonwebtokenJjwtBom = "0.13.0"
 kaptcha = "2.3.2"
-axonSpringBootStarter = "5.4.1"
+axonSpringBootStarter = "5.4.2"
 yauaa = "8.3.0"
 ip4j = "1.0.0"
 
