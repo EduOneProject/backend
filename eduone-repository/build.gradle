@@ -2,6 +2,9 @@ description = "事件投影模块"
 
 dependencies {
     implementation(project(":eduone-domain-api"))
+    implementation(project(":eduone-common"))
     implementation(platform(libs.mybatisPlusBom))
     implementation(libs.mybatisPlusCore)
+    implementation(libs.springContext)
+    implementation(libs.axonMessaging)
 }

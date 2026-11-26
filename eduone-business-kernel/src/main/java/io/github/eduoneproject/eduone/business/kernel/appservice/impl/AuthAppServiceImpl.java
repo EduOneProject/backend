@@ -75,7 +75,6 @@ public class AuthAppServiceImpl implements AuthAppService {
         command.setId(sessionId);
         command.setUserId(userId);
         command.setActiveTime(activeTime);
-        command.setUserAgent(param.getUserAgent());
         commandGateway.sendAndWait(command);
 
         LoginSuccessResult result = new LoginSuccessResult();
@@ -96,7 +95,6 @@ public class AuthAppServiceImpl implements AuthAppService {
         if (resultCode == RotateAccessTokenResult.ResultCode.SUCCESS) {
             RotateUserSessionTokenCommand command = new RotateUserSessionTokenCommand();
             command.setId(rotateAccessTokenResult.getSessionId());
-            command.setUserId(rotateAccessTokenResult.getUserId());
             command.setRotateTime(rotateAccessTokenResult.getRotateTime());
             commandGateway.sendAndWait(command);
         }

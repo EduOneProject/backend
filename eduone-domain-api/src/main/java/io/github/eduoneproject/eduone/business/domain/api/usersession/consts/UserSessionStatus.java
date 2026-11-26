@@ -1,5 +1,7 @@
 package io.github.eduoneproject.eduone.business.domain.api.usersession.consts;
 
+import io.github.eduoneproject.eduone.business.domain.api.usersession.event.UserSessionCreatedEvent;
+import io.github.eduoneproject.eduone.business.domain.api.usersession.event.UserSessionRevokedEvent;
 import lombok.Getter;
 
 /**
@@ -42,5 +44,18 @@ public enum UserSessionStatus {
     UserSessionStatus(String code, String description) {
         this.code = code;
         this.description = description;
+    }
+
+    /**
+     * 投影支持类
+     */
+    public static class Projection {
+        public static UserSessionStatus of(@SuppressWarnings("unused") UserSessionCreatedEvent event) {
+            return ACTIVE;
+        }
+
+        public static UserSessionStatus of(@SuppressWarnings("unused") UserSessionRevokedEvent event) {
+            return TERMINATED;
+        }
     }
 }

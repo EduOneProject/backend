@@ -30,9 +30,4 @@ public class CreateUserSessionCommand implements Serializable {
      * 激活时间
      */
     private OffsetDateTime activeTime;
-
-    /**
-     * 用户代理
-     */
-    private String userAgent;
 }

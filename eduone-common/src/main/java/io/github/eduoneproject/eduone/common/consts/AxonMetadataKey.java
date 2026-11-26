@@ -1,4 +1,4 @@
-package io.github.eduoneproject.eduone.business.kernel.consts;
+package io.github.eduoneproject.eduone.common.consts;
 
 /**
  * Axon元数据键

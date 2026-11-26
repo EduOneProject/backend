@@ -1,6 +1,6 @@
 package io.github.eduoneproject.eduone.business.kernel.config.axon;
 
-import io.github.eduoneproject.eduone.business.kernel.consts.AxonMetadataKey;
+import io.github.eduoneproject.eduone.common.consts.AxonMetadataKey;
 import io.github.eduoneproject.eduone.common.domain.context.ServiceContext;
 import io.github.eduoneproject.eduone.common.domain.context.ServiceContextLocal;
 import org.axonframework.messaging.commandhandling.CommandMessage;

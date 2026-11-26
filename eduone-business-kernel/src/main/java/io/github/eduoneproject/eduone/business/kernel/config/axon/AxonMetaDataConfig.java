@@ -1,6 +1,6 @@
 package io.github.eduoneproject.eduone.business.kernel.config.axon;
 
-import io.github.eduoneproject.eduone.business.kernel.consts.AxonMetadataKey;
+import io.github.eduoneproject.eduone.common.consts.AxonMetadataKey;
 import org.axonframework.messaging.core.correlation.SimpleCorrelationDataProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

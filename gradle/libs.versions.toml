@@ -47,6 +47,7 @@ graphqlJavaExtendedScalars = { module = "com.graphql-java:graphql-java-extended-
 kaptcha = { module = "com.github.penggle:kaptcha", version.ref = "kaptcha" }
 axonSpringBootStarter = { module = "org.axonframework.extensions.spring:axon-spring-boot-starter", version.ref = "axonSpringBootStarter" }
 axonEventsourcing = { module = "org.axonframework:axon-eventsourcing", version.ref = "axonSpringBootStarter" }
+axonMessaging = { module = "org.axonframework:axon-messaging", version.ref = "axonSpringBootStarter" }
 yauaa = { module = "nl.basjes.parse.useragent:yauaa", version.ref = "yauaa" }
 mysqlConnectorJ = { module = "com.mysql:mysql-connector-j", version.ref = "mysqlConnectorJ" }
 mybatisPlusBom = { module = "com.baomidou:mybatis-plus-bom", version.ref = "mybatisPlusBom" }

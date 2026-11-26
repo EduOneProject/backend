@@ -1,7 +1,9 @@
 package io.github.eduoneproject.eduone.common.domain.context;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
@@ -11,6 +13,8 @@ import java.io.Serializable;
  * @author summerain0
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class UserIdentity implements Serializable {
     /**

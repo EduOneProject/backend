@@ -22,11 +22,6 @@ public class RotateUserSessionTokenCommand implements Serializable {
     private String id;
 
     /**
-     * 用户ID
-     */
-    private String userId;
-
-    /**
      * 轮换时间
      */
     private OffsetDateTime rotateTime;
