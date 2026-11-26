@@ -26,7 +26,7 @@ CREATE TABLE `token_entry`
     `mask`           int          NOT NULL COMMENT '分段掩码',
     `owner`          varchar(255) DEFAULT NULL COMMENT '当前持有该分段的节点标识',
     `timestamp`      varchar(255) NOT NULL COMMENT '令牌最后更新时间',
-    `token`          blob COMMENT '处理进度令牌（序列化数据）',
+    `token`          text COMMENT '处理进度令牌（序列化数据）',
     `token_type`     varchar(255) DEFAULT NULL COMMENT '令牌类型',
     PRIMARY KEY (`processor_name`, `segment`)
 ) ENGINE = InnoDB COMMENT ='事件处理器进度跟踪表';
