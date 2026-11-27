@@ -1,7 +1,7 @@
 [versions]
 springBoot = "4.1.1"
 springDependencyManagement = "1.1.7"
-mysqlConnectorJ = "9.7.0"
+mysqlConnectorJ = "26.10.0"
 mybatisPlusBom = "3.5.16"
 apacheCommonsCollections4 = "4.5.0"
 apacheCommonsLang3 = "3.22.0"
