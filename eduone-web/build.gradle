@@ -17,6 +17,7 @@ dependencies {
     implementation(libs.springBootStarterAspectj)
     implementation(libs.springBootStarterSecurity)
     implementation(libs.springBootStarterValidation)
+    implementation(libs.springBootStarterActuator)
     implementation(platform(libs.mybatisPlusBom))
     implementation(libs.mybatisPlusSpringBoot4Starter)
     implementation(libs.mybatisPlusJsqlparser)

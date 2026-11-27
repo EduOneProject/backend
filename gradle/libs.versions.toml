@@ -31,6 +31,7 @@ springBootStarterSecurity = { module = "org.springframework.boot:spring-boot-sta
 junitPlatformLauncher = { module = "org.junit.platform:junit-platform-launcher" }
 mybatisPlusJsqlparser = { module = "com.baomidou:mybatis-plus-jsqlparser" }
 mybatisPlusSpringBoot4Starter = { module = "com.baomidou:mybatis-plus-spring-boot4-starter" }
+springBootStarterActuator = { module = "org.springframework.boot:spring-boot-starter-actuator" }
 jjwtApi = { module = "io.jsonwebtoken:jjwt-api", version.ref = "jsonwebtokenJjwtBom" }
 jjwtImpl = { module = "io.jsonwebtoken:jjwt-impl", version.ref = "jsonwebtokenJjwtBom" }
 jjwtJackson = { module = "io.jsonwebtoken:jjwt-jackson", version.ref = "jsonwebtokenJjwtBom" }
